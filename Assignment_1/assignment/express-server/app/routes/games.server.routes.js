@@ -4,7 +4,7 @@ const games = require('../../app/controllers/games.server.controller');
 module.exports = function (app) {
     app.route('/api/games')
         .get(users.requiresLogin, games.list)
-        .post(users.requiresLogin, games.create);
+        .post(games.create);
     //
     app.route('/api/games/:gameId')
         .get(games.read)

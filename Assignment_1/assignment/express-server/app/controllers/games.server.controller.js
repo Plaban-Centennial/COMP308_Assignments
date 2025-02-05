@@ -30,30 +30,17 @@ exports.create = function (req, res) {
     console.log(req.body)
     //
     //
-    User.findOne({ username: req.body.username }, (err, user) => {
 
-        if (err) { return getErrorMessage(err); }
-        //
-        req.id = user._id;
-        console.log('user._id', req.id);
+    game.save((err) => {
+        if (err) {
+            console.log('error', getErrorMessage(err))
 
-
-    }).then(function () {
-        // game.creator = req.id
-        console.log('req.user._id', req.id);
-
-        game.save((err) => {
-            if (err) {
-                console.log('error', getErrorMessage(err))
-
-                return res.status(400).send({
-                    message: getErrorMessage(err)
-                });
-            } else {
-                res.status(200).json(game);
-            }
-        });
-
+            return res.status(400).send({
+                message: getErrorMessage(err)
+            });
+        } else {
+            res.status(200).json(game);
+        }
     });
 };
 //
