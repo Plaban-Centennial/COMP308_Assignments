@@ -14,7 +14,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #282c34ab;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -35,4 +35,23 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* filepath: /e:/College/Semester_6/COMP308_004_Emerging_Technologies/Assignments/Assignment_1/assignment/react-client/src/App.css */
+.fullscreen-blur {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(40, 44, 52, 0.2); /* Translucent background */
+  backdrop-filter: blur(10px); /* Blur effect */
+  z-index: -1; /* Ensure it is behind other content */
+}
+
+.translucent-background {
+  background-color: rgba(40, 44, 52, 0.1); /* Translucent background */
+  backdrop-filter: blur(100px); /* Blur effect */
+  border-radius: 10px; /* Optional: add rounded corners */
+  padding: 20px; /* Optional: add padding */
 }

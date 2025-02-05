@@ -1,6 +1,7 @@
+// filepath: /e:/College/Semester_6/COMP308_004_Emerging_Technologies/Assignments/Assignment_1/assignment/react-client/src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { Container, Box, Paper, ThemeProvider } from '@mui/material';
+import { Container, Box, Paper, ThemeProvider, CssBaseline } from '@mui/material';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Home from './components/Home';
@@ -17,12 +18,15 @@ import EditArticle from './components/EditArticle';
 import AddGame from './components/AddGame';
 import ThreeBackground from './components/ThreeBackground';
 import theme from './theme';
+import './App.css'; // Import the CSS file
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
       <Router>
         <ThreeBackground />
+        <div className="fullscreen-blur"></div>
         <Navbar bg="dark" variant="dark" expand="lg">
           <Container>
             <Navbar.Brand as={Link} to="/home">Game Library Management</Navbar.Brand>
@@ -42,7 +46,7 @@ function App() {
 
         <Container maxWidth="md" sx={{ position: 'relative', zIndex: 1 }}>
           <Box sx={{ mt: 4, mb: 2 }}>
-            <Paper elevation={3}>
+            <Paper elevation={3} className="translucent-background">
               <Box sx={{ p: 3 }}>
                 <Routes>
                   <Route index element={<Home />} />
