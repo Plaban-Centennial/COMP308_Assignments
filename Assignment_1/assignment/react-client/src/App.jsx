@@ -44,7 +44,7 @@ function App() {
               <Nav.Link as={Link} to="/login">Login</Nav.Link>
               <Nav.Link as={Link} to="/create">Register</Nav.Link>
               <Nav.Link as={Link} to="/list">List of Users</Nav.Link>
-              <Nav.Link as={Link} to="/listgames">Games</Nav.Link>
+              <Nav.Link as={Link} to="/listgames">Show Games Catalog</Nav.Link>
               <Nav.Link as={Link} to="/creategame">Add Game to Database</Nav.Link>
             </Nav>
           </Navbar.Collapse>

@@ -12,6 +12,7 @@ function View (props) {
   const [data, setData] = useState();
   //
   const [articleOperation, setArticleOperation] = useState('no-op');
+  const [gameOperation, setGameOperation] = useState('no-game-op');
   // called when user clicks on Logout button
   // to clear the cookie and set the screen state variable 
   // back to its initial state.
@@ -62,9 +63,9 @@ function View (props) {
               <p>{screen}</p>
               <p>{data}</p>
               <button onClick={verifyCookie}>Verify Cookie</button>
-              <button onClick={() => setArticleOperation('create')}>Create Articles</button>
+              <button onClick={() => setGameOperation('create')}>Add Game</button>
               
-              <button onClick={() => setArticleOperation('list')}>List Articles</button>
+              <button onClick={() => setGameOperation('list')}>List Games</button>
   
               <button onClick={deleteCookie}>Log out</button>
             </div> 

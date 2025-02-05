@@ -3,7 +3,7 @@ const games = require('../../app/controllers/games.server.controller');
 //
 module.exports = function (app) {
     app.route('/api/games')
-        .get(users.requiresLogin, games.list)
+        .get(games.list)
         .post(games.create);
     //
     app.route('/api/games/:gameId')
