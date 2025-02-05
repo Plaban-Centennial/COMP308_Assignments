@@ -1,3 +1,4 @@
+// filepath: /e:/College/Semester_6/COMP308_004_Emerging_Technologies/Assignments/Assignment_1/assignment/react-client/src/components/ThreeBackground.jsx
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
@@ -45,6 +46,72 @@ const ThreeBackground = () => {
     };
     window.addEventListener('mousemove', onMouseMove);
 
+    // Mouse hover event listener
+    const onMouseEnter = (event) => {
+      const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+      const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      // Create a burst of particles at the hover position with glow effect
+      const burstGeometry = new THREE.BufferGeometry();
+      const burstMaterial = new THREE.PointsMaterial({ size: 0.1, vertexColors: true });
+      const burstPositions = new Float32Array(300);
+      const burstColors = new Float32Array(300);
+      for (let i = 0; i < 300; i += 3) {
+        burstPositions[i] = mouseX * 5 + (Math.random() - 0.5) * 0.5;
+        burstPositions[i + 1] = mouseY * 5 + (Math.random() - 0.5) * 0.5;
+        burstPositions[i + 2] = (Math.random() - 0.5) * 0.5;
+        burstColors[i] = Math.random();
+        burstColors[i + 1] = Math.random();
+        burstColors[i + 2] = Math.random();
+      }
+      burstGeometry.setAttribute('position', new THREE.BufferAttribute(burstPositions, 3));
+      burstGeometry.setAttribute('color', new THREE.BufferAttribute(burstColors, 3));
+      const burstParticles = new THREE.Points(burstGeometry, burstMaterial);
+      scene.add(burstParticles);
+
+      // Add glow effect
+      const glowMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+          "c": { type: "f", value: 1.0 },
+          "p": { type: "f", value: 1.4 },
+          glowColor: { type: "c", value: new THREE.Color(0xffff00) },
+          viewVector: { type: "v3", value: camera.position }
+        },
+        vertexShader: `
+          uniform vec3 viewVector;
+          uniform float c;
+          uniform float p;
+          varying float intensity;
+          void main() {
+            vec3 vNormal = normalize(normalMatrix * normal);
+            vec3 vNormel = normalize(normalMatrix * viewVector);
+            intensity = pow(c - dot(vNormal, vNormel), p);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform vec3 glowColor;
+          varying float intensity;
+          void main() {
+            vec3 glow = glowColor * intensity * 2.0; // Increase brightness
+            gl_FragColor = vec4(glow, 1.0);
+          }
+        `,
+        side: THREE.FrontSide,
+        blending: THREE.AdditiveBlending,
+        transparent: true
+      });
+      const glowMesh = new THREE.Points(burstGeometry, glowMaterial);
+      scene.add(glowMesh);
+
+      // Remove burst particles and glow effect after a short delay
+      setTimeout(() => {
+        scene.remove(burstParticles);
+        scene.remove(glowMesh);
+      }, 500);
+    };
+    window.addEventListener('mouseenter', onMouseEnter);
+
     // Animation
     const animate = () => {
       requestAnimationFrame(animate);
@@ -74,6 +141,7 @@ const ThreeBackground = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseenter', onMouseEnter);
       mount.removeChild(renderer.domElement);
     };
   }, []);

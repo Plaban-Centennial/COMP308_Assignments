@@ -35,11 +35,11 @@ function Home(props) {
         <Box sx={{ mt: 4, mb: 2 }}>
           <Paper elevation={3}>
             <Box sx={{ p: 3, textAlign: 'center' }}>
-              <Typography variant="h2" component="h1" gutterBottom color="primary">
-                Game Library Management System
+              <Typography variant="h4" component="h1" gutterBottom color="primary">
+                Welcome to the Game Library
               </Typography>
-              <Typography variant="h6" component="p">
-                Manage your game library with ease. Perform CRUD operations to keep your collection up to date.
+              <Typography variant="body1" color="textSecondary">
+                Explore a vast collection of games and manage your library with ease.
               </Typography>
             </Box>
           </Paper>

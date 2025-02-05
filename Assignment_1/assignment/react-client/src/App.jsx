@@ -1,9 +1,7 @@
 // filepath: /e:/College/Semester_6/COMP308_004_Emerging_Technologies/Assignments/Assignment_1/assignment/react-client/src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { Container, Box, Paper, ThemeProvider, CssBaseline } from '@mui/material';
-import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
+import { Container, Box, Paper, ThemeProvider, CssBaseline, AppBar, Toolbar, Button, Typography } from '@mui/material';
 import Home from './components/Home';
 import CreateUser from './components/CreateUser';
 import Login from './components/Login';
@@ -27,22 +25,19 @@ function App() {
       <Router>
         <ThreeBackground />
         <div className="fullscreen-blur"></div>
-        <Navbar bg="dark" variant="dark" expand="lg">
-          <Container>
-            <Navbar.Brand as={Link} to="/home">Game Library Management</Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="me-auto">
-                <Nav.Link as={Link} to="/home">Home</Nav.Link>
-                <Nav.Link as={Link} to="/login">Login</Nav.Link>
-                <Nav.Link as={Link} to="/create">Register</Nav.Link>
-                <Nav.Link as={Link} to="/list">List of Users</Nav.Link>
-                <Nav.Link as={Link} to="/listgames">Show Games Catalog</Nav.Link>
-                <Nav.Link as={Link} to="/creategame">Add Game to Database</Nav.Link>
-              </Nav>
-            </Navbar.Collapse>
-          </Container>
-        </Navbar>
+        <AppBar position="static" sx={{ backgroundColor: 'rgba(255, 23, 68, 0.28)', backdropFilter: 'blur(10px)' }}>
+          <Toolbar>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Game Library Management
+            </Typography>
+            <Button color="inherit" component={Link} to="/home">Home</Button>
+            <Button color="inherit" component={Link} to="/login">Login</Button>
+            <Button color="inherit" component={Link} to="/create">Register</Button>
+            <Button color="inherit" component={Link} to="/list">List of Users</Button>
+            <Button color="inherit" component={Link} to="/listgames">Show Games Catalog</Button>
+            <Button color="inherit" component={Link} to="/creategame">Add Game to Database</Button>
+          </Toolbar>
+        </AppBar>
 
         <Container maxWidth="md" sx={{ position: 'relative', zIndex: 1 }}>
           <Box sx={{ mt: 4, mb: 2 }}>
