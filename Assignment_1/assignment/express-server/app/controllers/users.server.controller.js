@@ -73,6 +73,7 @@ exports.read = function (req, res) {
 //
 // 'userByID' controller method to find a user by its id
 exports.userByID = function (req, res, next, id) {
+	console.log('in userByID:', id);
 	// Use the 'User' static 'findOne' method to retrieve a specific user
 	User.findOne({
 		_id: id
@@ -89,6 +90,31 @@ exports.userByID = function (req, res, next, id) {
 		}
 	});
 };
+
+exports.me = async function (req, res) {
+
+	var payload;
+	try {
+		// Parse the JWT string and store the result in `payload`.
+		// Note that we are passing the key in this method as well. This method will throw an error
+		// if the token is invalid (if it has expired according to the expiry time we set on sign in),
+		// or if the signature does not match
+		payload = jwt.verify(req.cookies.token, jwtKey)
+		console.log('in me:', payload)
+	} catch (e) {
+		if (e instanceof jwt.JsonWebTokenError) {
+			// the JWT is unauthorized, return a 401 error
+			return res.status(401).end()
+		}
+		// otherwise, return a bad request error
+		return res.status(400).end()
+	}
+
+	const user = await User.findOne({ _id: payload.id }).populate('games');
+	console.log(user);
+	res.json(user);
+}
+
 //update a user by id
 exports.update = function (req, res, next) {
 	console.log(req.body);

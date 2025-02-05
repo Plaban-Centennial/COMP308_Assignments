@@ -18,24 +18,38 @@ function ListGamesForUser(props) {
 
     useEffect(() => {
         const fetchData = async () => {
-            axios.get(apiUrl)
-                .then(result => {
-                    console.log('<List>result.data:', result.data)
-                    //check if the user has logged in
-                    if (result.data.screen !== 'auth') {
-                        console.log('data in if:', result.data)
-                        console.log('data state in if:', result.data.state)
-                        setData(result.data);
-                        setIsAuthenticated(isLoggedIn());
-                        setShowLoading(false);
-                    }
-                    else {
-                        // setIsAuthenticated(false);
-                    }
-                }).catch((error) => {
-                    console.log('error in fetchData:', error)
+            // axios.get(apiUrl)
+            //     .then(result => {
+            //         console.log('<List>result.data:', result.data)
+
+            //         if (result.data.screen !== 'auth') {
+            //             console.log('data in if:', result.data)
+            //             console.log('data state in if:', result.data.state)
+            //             setData(result.data);
+            //             setIsAuthenticated(isLoggedIn());
+            //             setShowLoading(false);
+            //         }
+            //         else {
+            //             // setIsAuthenticated(false);
+            //         }
+            //     }).catch((error) => {
+            //         console.log('error in fetchData:', error)
+            //         // setIsAuthenticated(false);
+            //     });
+            axios.get("/api/users/me").then(result => {
+                console.log('result.data:', result.data)
+                if (result.data.screen !== 'auth') {
+                    console.log('data in if:', result.data)
+                    console.log('data state in if:', result.data.state)
+                    setData(result.data.games);
+                    setIsAuthenticated(isLoggedIn());
+                    setShowLoading(false);
+                }
+                else {
                     // setIsAuthenticated(false);
-                });
+                }
+
+            }).catch((error) => { });
         };
         fetchData();
     }, []);

@@ -13,4 +13,5 @@ module.exports = function (app) {
             delete);
     //
     app.param('gameId', games.gameByID);
+    
 };
