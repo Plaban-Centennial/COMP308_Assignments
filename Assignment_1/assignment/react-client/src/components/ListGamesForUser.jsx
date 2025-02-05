@@ -1,102 +1,105 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Spinner from 'react-bootstrap/Spinner';
-import Login from './Login';
-import Button from 'react-bootstrap/Button';
 import { useNavigate } from 'react-router-dom';
+import { Container, Typography, Box, Paper, List, ListItem, ListItemText, CircularProgress, Button } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Login from './Login';
 import isLoggedIn from './LoginStatus';
-//
-// this component is used to list all articles
+
+const theme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#ff1744', // Red accent color
+    },
+    background: {
+      default: '#121212',
+      paper: '#1e1e1e',
+    },
+  },
+  typography: {
+    fontFamily: 'Segoe UI, Arial, sans-serif',
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          padding: '20px',
+          borderRadius: '10px',
+        },
+      },
+    },
+  },
+});
+
 function ListGamesForUser(props) {
-    let navigate = useNavigate();
-    //
-    const [data, setData] = useState([]);
-    const [showLoading, setShowLoading] = useState(true);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const apiUrl = "/api/api/games";
+  let navigate = useNavigate();
+  const [data, setData] = useState([]);
+  const [showLoading, setShowLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const apiUrl = "/api/api/games";
 
-    useEffect(() => {
-        const fetchData = async () => {
-            // axios.get(apiUrl)
-            //     .then(result => {
-            //         console.log('<List>result.data:', result.data)
+  useEffect(() => {
+    const fetchData = async () => {
+      axios.get("/api/users/me").then(result => {
+        console.log('result.data:', result.data);
+        if (result.data.screen !== 'auth') {
+          console.log('data in if:', result.data);
+          console.log('data state in if:', result.data.state);
+          setData(result.data.games);
+          setIsAuthenticated(isLoggedIn());
+          setShowLoading(false);
+        } else {
+          setIsAuthenticated(false);
+        }
+      }).catch((error) => {
+        console.log('error in fetchData:', error);
+        setIsAuthenticated(false);
+        setShowLoading(false);
+      });
+    };
+    fetchData();
+  }, []);
 
-            //         if (result.data.screen !== 'auth') {
-            //             console.log('data in if:', result.data)
-            //             console.log('data state in if:', result.data.state)
-            //             setData(result.data);
-            //             setIsAuthenticated(isLoggedIn());
-            //             setShowLoading(false);
-            //         }
-            //         else {
-            //             // setIsAuthenticated(false);
-            //         }
-            //     }).catch((error) => {
-            //         console.log('error in fetchData:', error)
-            //         // setIsAuthenticated(false);
-            //     });
-            axios.get("/api/users/me").then(result => {
-                console.log('result.data:', result.data)
-                if (result.data.screen !== 'auth') {
-                    console.log('data in if:', result.data)
-                    console.log('data state in if:', result.data.state)
-                    setData(result.data.games);
-                    setIsAuthenticated(isLoggedIn());
-                    setShowLoading(false);
-                }
-                else {
-                    // setIsAuthenticated(false);
-                }
+  const showDetail = (id) => {
+    navigate('/showgame/' + id);
+  };
 
-            }).catch((error) => { });
-        };
-        fetchData();
-    }, []);
-
-
-    // const isLoggedIn = () => {
-
-    //   const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");;
-
-    //   return token !== '';
-
-    // }
-
-    // const removeGame = (id) => {
-    //     axios.post("/api/users/modifygameforUser/" + id);
-    // }
-
-    const showDetail = (id) => {
-        console.log('id:', id)
-        navigate('/showgame/' + id);
-    }
-
-    return (
-        <div>
-            {data.length !== 0
-                ? <div>
-                    {showLoading && <Spinner animation="border" role="status">
-                        <span className="sr-only">Loading...</span>
-                    </Spinner>}
-                    <ListGroup>
-                        {data.map((item, idx) => (
-                            // <ListGroup.Item key={idx} action onClick={() => { showDetail(item._id) }}>{item.title} ({item.releaseYear})</ListGroup.Item>
-                            <ListGroup.Item key={idx} >{item.title} ({item.releaseYear})
-                                {
-                                    (<Button variant="primary" onClick={() => showDetail(item._id)} style={{ marginLeft: '10px' }}>
-                                        Show Details
-                                    </Button>)
-                                }
-                            </ListGroup.Item>
-                        ))}
-                    </ListGroup>
-                </div>
-                : < Login />
-            }
-        </div>
-
-    );
+  return (
+    <ThemeProvider theme={theme}>
+      <Container maxWidth="md">
+        <Box sx={{ mt: 4, mb: 2 }}>
+          <Typography variant="h4" component="h1" gutterBottom color="primary">
+            Your Games
+          </Typography>
+        </Box>
+        <Paper elevation={3}>
+          <Box sx={{ p: 3 }}>
+            {showLoading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <CircularProgress />
+              </Box>
+            ) : (
+              isAuthenticated ? (
+                <List>
+                  {data.map((item, idx) => (
+                    <ListItem key={idx} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <ListItemText primary={`${item.title} (${item.releaseYear})`} />
+                      <Button variant="contained" color="primary" onClick={() => showDetail(item._id)}>
+                        Show Details
+                      </Button>
+                    </ListItem>
+                  ))}
+                </List>
+              ) : (
+                <Login />
+              )
+            )}
+          </Box>
+        </Paper>
+      </Container>
+    </ThemeProvider>
+  );
 }
-//
+
 export default ListGamesForUser;

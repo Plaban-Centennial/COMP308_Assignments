@@ -1,74 +1,116 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Spinner from 'react-bootstrap/Spinner';
-import Button from 'react-bootstrap/Button';
 import { useNavigate, useParams } from 'react-router-dom';
-//
-// this component is used to show a single article
+import { Container, Typography, Box, Paper, CircularProgress, Button } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const theme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#ff1744', // Red accent color
+    },
+    background: {
+      default: '#121212',
+      paper: '#1e1e1e',
+    },
+  },
+  typography: {
+    fontFamily: 'Segoe UI, Arial, sans-serif',
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          padding: '20px',
+          borderRadius: '10px',
+        },
+      },
+    },
+  },
+});
+
 function ShowGame(props) {
-  let navigate = useNavigate()
-  let {id} = useParams();
-  //
+  let navigate = useNavigate();
+  let { id } = useParams();
   const [data, setData] = useState({});
   const [showLoading, setShowLoading] = useState(true);
   const apiUrl = "/api/api/games/" + id;
 
   useEffect(() => {
-    setShowLoading(false);
     const fetchData = async () => {
       const result = await axios(apiUrl);
-      console.log('results from games',result.data);
-
+      console.log('results from games', result.data);
       setData(result.data);
       setShowLoading(false);
     };
 
     fetchData();
-  }, []);
+  }, [apiUrl]);
 
   const editGame = (id) => {
     navigate('/editgame/' + id);
-    
   };
-
-  // const deleteGame = (id) => {
-  //   setShowLoading(true);
-  //   const game = {title: data.title, genre: data.genre, platform: data.platform , releaseYear: data.releaseYear, developer: data.developer, rating: data.rating, description: data.description };
-  //   //
-  //   axios.delete(apiUrl, game)
-  //     .then((result) => {
-  //       setShowLoading(false);
-  //       navigate('/listgames')
-  //     }).catch((error) => setShowLoading(false));
-  // };
 
   const removeGame = (id) => {
     axios.delete("/api/users/modifygameforUser/" + id).then((result) => {
-      console.log('results from save game:', result.data)
-      navigate('/login/')
-
-    }).catch((error) => setShowLoading(false));
-;
-  }
+      navigate('/listgames');
+    }).catch((error) => {
+      console.error('Error removing game:', error);
+    });
+  };
 
   return (
-    <div>
-      {showLoading && <Spinner animation="border" role="status">
-        <span className="sr-only">Loading...</span>
-      </Spinner> }    
-        <h1>Title: {data.title}</h1>
-        <p>Release: {data.releaseYear}</p>
-        <p>Developer: {data.developer}</p>
-        <p>Genre: {data.genre}</p>
-        <p>Platform: {data.platform}</p>
-        <p>Rating: {data.rating}</p>
-        <p>Description: {data.description}</p>
-        
-        <p>
-          {/* <Button type="button" variant="primary" onClick={() => { editArticle(data._id) }}>Edit</Button>&nbsp; */}
-          <Button type="button" variant="danger" onClick={() => { removeGame(data._id) }}>Delete</Button>
-        </p>
-   </div>
+    <ThemeProvider theme={theme}>
+      <Container maxWidth="md">
+        <Box sx={{ mt: 4, mb: 2 }}>
+          <Typography variant="h4" component="h1" gutterBottom color="primary">
+            Game Details
+          </Typography>
+        </Box>
+        <Paper elevation={3}>
+          <Box sx={{ p: 3 }}>
+            {showLoading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <CircularProgress />
+              </Box>
+            ) : (
+              <Box>
+                <Typography variant="h6" component="h2">
+                  {data.title}
+                </Typography>
+                <Typography variant="body1" component="p">
+                  Genre: {data.genre}
+                </Typography>
+                <Typography variant="body1" component="p">
+                  Platform: {data.platform}
+                </Typography>
+                <Typography variant="body1" component="p">
+                  Release Year: {data.releaseYear}
+                </Typography>
+                <Typography variant="body1" component="p">
+                  Developer: {data.developer}
+                </Typography>
+                <Typography variant="body1" component="p">
+                  Rating: {data.rating}
+                </Typography>
+                <Typography variant="body1" component="p">
+                  Description: {data.description}
+                </Typography>
+                <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
+                  {/* <Button variant="contained" color="primary" onClick={() => editGame(data._id)}>
+                    Edit
+                  </Button> */}
+                  <Button variant="contained" color="secondary" onClick={() => removeGame(data._id)}>
+                    Delete
+                  </Button>
+                </Box>
+              </Box>
+            )}
+          </Box>
+        </Paper>
+      </Container>
+    </ThemeProvider>
   );
 }
 

@@ -4,6 +4,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Spinner from 'react-bootstrap/Spinner';
 import Login from './Login';
 import { useNavigate } from 'react-router-dom';
+
 //
 // this component is used to list all articles
 function ListArticles(props) {
