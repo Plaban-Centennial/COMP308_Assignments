@@ -1,66 +1,34 @@
 import React from 'react';
-import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-  Routes
-} from "react-router-dom";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { Container, Box, Paper, ThemeProvider } from '@mui/material';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
-import Container from 'react-bootstrap/Container';
-import './App.css';
-import List from './components/List';
-import EditUser from './components/EditUser';
-import EditArticle from './components/EditArticle';
+import Home from './components/Home';
 import CreateUser from './components/CreateUser';
+import Login from './components/Login';
+import List from './components/List';
+import ListArticles from './components/ListArticles';
+import ListGames from './components/ListGames';
+import EditUser from './components/EditUser';
 import ShowUser from './components/ShowUser';
 import ShowArticle from './components/ShowArticle';
-import ListArticles from "./components/ListArticles";
-import Home from './components/Home';
-import Login from './components/Login';
-import AddGame from './components/AddGame';
 import ShowGame from './components/ShowGame';
-import ListGames from './components/ListGames';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Box, Paper } from '@mui/material';
-
-const theme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: {
-      main: '#ff1744', // Red accent color
-    },
-    background: {
-      default: '#121212',
-      paper: '#1e1e1e',
-    },
-  },
-  typography: {
-    fontFamily: 'Segoe UI, Arial, sans-serif',
-  },
-  components: {
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          padding: '20px',
-          borderRadius: '10px',
-        },
-      },
-    },
-  },
-});
+import EditArticle from './components/EditArticle';
+import AddGame from './components/AddGame';
+import ThreeBackground from './components/ThreeBackground';
+import theme from './theme';
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <Router>
+        <ThreeBackground />
         <Navbar bg="dark" variant="dark" expand="lg">
           <Container>
-            <Navbar.Brand href="#home">Game Library Management</Navbar.Brand>
+            <Navbar.Brand as={Link} to="/home">Game Library Management</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="mr-auto">
+              <Nav className="me-auto">
                 <Nav.Link as={Link} to="/home">Home</Nav.Link>
                 <Nav.Link as={Link} to="/login">Login</Nav.Link>
                 <Nav.Link as={Link} to="/create">Register</Nav.Link>
@@ -72,7 +40,7 @@ function App() {
           </Container>
         </Navbar>
 
-        <Container maxWidth="md">
+        <Container maxWidth="md" sx={{ position: 'relative', zIndex: 1 }}>
           <Box sx={{ mt: 4, mb: 2 }}>
             <Paper elevation={3}>
               <Box sx={{ p: 3 }}>
