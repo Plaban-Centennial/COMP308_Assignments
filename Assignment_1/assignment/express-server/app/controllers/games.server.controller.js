@@ -1,3 +1,4 @@
+const { json } = require('body-parser');
 const mongoose = require('mongoose');
 const Game = mongoose.model('Game');
 const User = require('mongoose').model('User');
@@ -29,20 +30,19 @@ exports.create = function (req, res) {
     console.log(req.body)
     //
     //
-    User.findOne({username: req.body.username}, (err, user) => {
+    User.findOne({ username: req.body.username }, (err, user) => {
 
         if (err) { return getErrorMessage(err); }
         //
         req.id = user._id;
-        console.log('user._id',req.id);
+        console.log('user._id', req.id);
 
-	
-    }).then( function () 
-    {
-        article.creator = req.id
-        console.log('req.user._id',req.id);
 
-        article.save((err) => {
+    }).then(function () {
+        // game.creator = req.id
+        console.log('req.user._id', req.id);
+
+        game.save((err) => {
             if (err) {
                 console.log('error', getErrorMessage(err))
 
@@ -50,32 +50,36 @@ exports.create = function (req, res) {
                     message: getErrorMessage(err)
                 });
             } else {
-                res.status(200).json(article);
+                res.status(200).json(game);
             }
         });
-    
+
     });
 };
 //
 
 //
 exports.list = function (req, res) {
-    Game.find().sort('-releaseYear').populate('title', 'genre developer releaseYear platform rating').exec((err, games) => {
-if (err) {
-        return res.status(400).send({
-            message: getErrorMessage(err)
-        });
-    } else {
-        res.status(200).json(games);
-    }
-});
+    console.log('in list', Game)
+    Game.find().sort('-releaseYear').exec((err, games) => {
+        if (err) {
+            console.log('ERROR error', getErrorMessage(err))
+            return res.status(400).send({
+                message: getErrorMessage(err)
+            });
+        } else {
+            res.status(200).json(games);
+        }
+    });
 };
 //
 
 //
 exports.gameByID = function (req, res, next, id) {
-    Game.findById(id).populate('title', 'genre developer releaseYear platform rating').exec((err, game) => {if (err) return next(err);
-    if (!game) return next(new Error('Failed to load game '
+    console.log('in gameByID:', id);
+    Game.findById(id).exec((err, game) => {
+        if (err) return next(err);
+        if (!game) return next(new Error('Failed to load game '
             + id));
         req.game = game;
         console.log('in gameByID:', req.game)
@@ -86,6 +90,7 @@ exports.gameByID = function (req, res, next, id) {
 
 //
 exports.read = function (req, res) {
+    console.log('in read:', req.params)
     res.status(200).json(req.game);
 };
 //
@@ -100,13 +105,14 @@ exports.update = function (req, res) {
     game.developer = req.body.developer;
     game.rating = req.body.rating;
     game.description = req.body.description;
+
     game.save((err) => {
         if (err) {
             return res.status(400).send({
                 message: getErrorMessage(err)
             });
         } else {
-            res.status(200).json(article);
+            res.status(200).json(game);
         }
     });
 };
@@ -114,6 +120,7 @@ exports.update = function (req, res) {
 
 //
 exports.delete = function (req, res) {
+    console.log('in delete:', req.game)
     const game = req.game;
     game.remove((err) => {
         if (err) {
@@ -128,8 +135,8 @@ exports.delete = function (req, res) {
 //The hasAuthorization() middleware uses the req.article and req.user objects
 //to verify that the current user is the creator of the current article
 exports.hasAuthorization = function (req, res, next) {
-    console.log('in hasAuthorization - creator: ',req.game.creator)
-    console.log('in hasAuthorization - user: ',req.id)
+    // console.log('in hasAuthorization - creator: ', req.game.creator)
+    console.log('in hasAuthorization - user: ', req.id)
     //console.log('in hasAuthorization - user: ',req.user._id)
 
 

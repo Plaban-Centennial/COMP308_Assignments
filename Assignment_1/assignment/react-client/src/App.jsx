@@ -26,7 +26,9 @@ import ListArticles from "./components/ListArticles";
 
 import Home from './components/Home';
 import Login from './components/Login';
-import CreateGame from './components/CreateGame';
+import AddGame from './components/AddGame';
+import ShowGame from './components/ShowGame';
+import ListGames from './components/ListGames';
 //
 function App() {
 
@@ -34,16 +36,16 @@ function App() {
     <Router>
       <Navbar bg="primary" variant="dark" expand="lg">
         <Container>
-          <Navbar.Brand href="#home">React Client for Game Library</Navbar.Brand>
+          <Navbar.Brand href="#home">Game Library Management</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
               <Nav.Link as={Link} to="/home" >Home</Nav.Link>
               <Nav.Link as={Link} to="/login">Login</Nav.Link>
+              <Nav.Link as={Link} to="/create">Register</Nav.Link>
               <Nav.Link as={Link} to="/list">List of Users</Nav.Link>
-              <Nav.Link as={Link} to="/listarticles">List of Articles</Nav.Link>
-              <Nav.Link as={Link} to="/create">Sign Up</Nav.Link>
-              <Nav.Link as={Link} to="/creategame">Create Game</Nav.Link>
+              <Nav.Link as={Link} to="/listgames">Games</Nav.Link>
+              <Nav.Link as={Link} to="/addgame">Add Game</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -57,12 +59,13 @@ function App() {
           <Route path="login" element= {< Login />}  />
           <Route path="list" element= {< List />}  />
           <Route path="listarticles" element= {< ListArticles />}  />
+          <Route path="listgames" element= {< ListGames />}  />
           <Route path="edit/:id" element= {< EditUser />}  />
           <Route path="show/:id" element= {< ShowUser />}  />
           <Route path="showarticle/:id" element= {< ShowArticle />}  />
+          <Route path="showgame/:id" element= {< ShowGame />}  />
           <Route path="editarticle/:id" element= {< EditArticle />}  />
-          {/* //Test */}
-          <Route path="creategame" element= {< CreateGame />}  />
+          <Route path="creategame" element= {< AddGame />}  />
 
         </Routes>
       </div>

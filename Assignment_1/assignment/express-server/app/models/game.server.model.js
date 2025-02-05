@@ -1,10 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const GameSchema = new Schema({
-    created: {
-        type: Date,
-        default: Date.now
-    },
     title: {
         type: String,
         default: '',

@@ -5,13 +5,13 @@ import Button from 'react-bootstrap/Button';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // this component is used to create a new article
-function CreateGame(props) {
+function AddGame(props) {
     //
     let navigate = useNavigate();
     //
     const username = props.screen;
     console.log('props.screen',props.screen)
-    const [article, setArticle] = useState({ _id: '', title: '', content: '', username: '' });
+    const [game, setGame] = useState({ _id: '', title: '', content: '', username: '' });
     const [showLoading, setShowLoading] = useState(false);
     //
     const apiUrl = "api/api/games"
@@ -19,13 +19,13 @@ function CreateGame(props) {
     const saveArticle = (e) => {
         setShowLoading(true);
         e.preventDefault();
-        const data = {title: article.title, content: article.content, username: username };
+        const data = {title: game.title, genre: game.genre, platform: game.platform , releaseYear: game.releaseYear, developer: game.developer, rating: game.rating, description: game.description };
         //
         axios.post(apiUrl, data)
         .then((result) => {
             setShowLoading(false);
             console.log('results from save game:',result.data)
-            navigate('/showarticle/' + result.data._id)
+            navigate('/showgame/' + result.data._id)
 
         }).catch((error) => setShowLoading(false));
     };
@@ -33,7 +33,7 @@ function CreateGame(props) {
     const onChange = (e) => {
         e.persist();   
 
-        setArticle({...article, [e.target.name]: e.target.value});
+        setGame({...article, [e.target.name]: e.target.value});
 
       }
     
@@ -65,4 +65,4 @@ function CreateGame(props) {
 
 }
 // 
-export default CreateGame;
+export default AddGame;
