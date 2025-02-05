@@ -62,7 +62,8 @@ function List(props) {
     navigate('/show/' + id);
   };
 
-  return (
+  return (data.length !== 0
+    ?
     <ThemeProvider theme={theme}>
       <Container maxWidth="md">
         <Box sx={{ mt: 4, mb: 2 }}>
@@ -99,6 +100,7 @@ function List(props) {
         </Paper>
       </Container>
     </ThemeProvider>
+    : <Login />
   );
 }
 
