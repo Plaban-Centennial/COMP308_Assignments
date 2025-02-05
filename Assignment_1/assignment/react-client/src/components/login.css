@@ -38,3 +38,8 @@ form {
     max-width: 600px;
   }
 }
+
+.red-accent-button {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
