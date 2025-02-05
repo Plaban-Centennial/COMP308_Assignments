@@ -6,7 +6,7 @@ import Login from './Login';
 import { useNavigate } from 'react-router-dom';
 //
 // this component is used to list all articles
-function ListGames(props) {
+function ListGamesForUser(props) {
   let navigate = useNavigate();
   //
   const [data, setData] = useState([]);
@@ -46,8 +46,7 @@ function ListGames(props) {
           </Spinner> }
           <ListGroup>
             {data.map((item, idx) => (
-              // <ListGroup.Item key={idx} action onClick={() => { showDetail(item._id) }}>{item.title} ({item.releaseYear})</ListGroup.Item>
-              <ListGroup.Item key={idx} >{item.title} ({item.releaseYear})</ListGroup.Item>
+              <ListGroup.Item key={idx} action onClick={() => { showDetail(item._id) }}>{item.title} ({item.releaseYear})</ListGroup.Item>
             ))}
           </ListGroup>
         </div>
