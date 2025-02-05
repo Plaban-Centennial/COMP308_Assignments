@@ -30,7 +30,8 @@ var UserSchema = new Schema({
 			(password) => password && password.length > 6,
 			'Password should be longer'
 		]
-	}
+	},
+	games: [{ type: Schema.Types.ObjectId, ref: 'Game' }]
 	
 });
 

@@ -4,8 +4,10 @@ import ListArticles from './ListArticles';
 import React, { useState } from 'react';
 //
 import axios from 'axios';
+import AddGame from './AddGame';
+import ListGamesForUser from './ListGamesForUser';
 //
-function View (props) {
+function View(props) {
   // read the info from props, coming from the ancestor component
   const { screen, setScreen } = props;
   // return a stateful value and funcion to update it
@@ -36,10 +38,12 @@ function View (props) {
       console.log(e);
     }
   }
+
+
   //
   const listArticles = (username) => {
 
-    console.log('in listArticles: ',username)
+    console.log('in listArticles: ', username)
 
   }
   //
@@ -52,26 +56,26 @@ function View (props) {
     <div className="App">
       {
         (() => {
-          switch (articleOperation) {
+          switch (gameOperation) {
             case 'list':
-              return <ListArticles />
+              return <ListGamesForUser />
             case 'create':
-              return <CreateArticle screen={screen} setScreen={setScreen} />
-            
+              return <AddGameToUser screen={screen} setScreen={setScreen} />
+
             default:
               return <div>
-              <p>{screen}</p>
-              <p>{data}</p>
-              <button onClick={verifyCookie}>Verify Cookie</button>
-              <button onClick={() => setGameOperation('create')}>Add Game</button>
-              
-              <button onClick={() => setGameOperation('list')}>List Games</button>
-  
-              <button onClick={deleteCookie}>Log out</button>
-            </div> 
+                <p>{screen}</p>
+                <p>{data}</p>
+                <button onClick={verifyCookie}>Verify Cookie</button>
+                {/* <button onClick={() => setGameOperation('create')}>Add Game</button> */}
+
+                <button onClick={() => setGameOperation('list')}>List Games</button>
+
+                <button onClick={deleteCookie}>Log out</button>
+              </div>
           }
         })()
-                   
+
       }
 
     </div>

@@ -25,6 +25,10 @@ module.exports = function (app) {
     app.post('/signin', users.authenticate);
     app.get('/signout', users.signout);
     app.get('/read_cookie', users.isSignedIn);
+    app.route('/users/modifygameforUser/:gameId')
+    .post(users.addGame)
+    .delete(users.deleteGame);
+    
     //
     //
     //path to a protected page

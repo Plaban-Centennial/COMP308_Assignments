@@ -3,58 +3,86 @@ import axios from 'axios';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Spinner from 'react-bootstrap/Spinner';
 import Login from './Login';
+import Button from 'react-bootstrap/Button';
 import { useNavigate } from 'react-router-dom';
+import isLoggedIn from './LoginStatus';
 //
 // this component is used to list all articles
 function ListGamesForUser(props) {
-  let navigate = useNavigate();
-  //
-  const [data, setData] = useState([]);
-  const [showLoading, setShowLoading] = useState(true);
-  const apiUrl = "api/api/games";
+    let navigate = useNavigate();
+    //
+    const [data, setData] = useState([]);
+    const [showLoading, setShowLoading] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const apiUrl = "/api/api/games";
 
-  useEffect(() => {
-    const fetchData = async () => {
-      axios.get(apiUrl)
-        .then(result => {
-          console.log('<List>result.data:',result.data)
-          //check if the user has logged in
-          if(result.data.screen !== 'auth')
-          {            
-            console.log('data in if:', result.data )
-            setData(result.data);
-            setShowLoading(false);
-          }
-        }).catch((error) => {
-          console.log('error in fetchData:', error)
-        });
-      };  
-    fetchData();
-  }, []);
+    useEffect(() => {
+        const fetchData = async () => {
+            axios.get(apiUrl)
+                .then(result => {
+                    console.log('<List>result.data:', result.data)
+                    //check if the user has logged in
+                    if (result.data.screen !== 'auth') {
+                        console.log('data in if:', result.data)
+                        console.log('data state in if:', result.data.state)
+                        setData(result.data);
+                        setIsAuthenticated(isLoggedIn());
+                        setShowLoading(false);
+                    }
+                    else {
+                        // setIsAuthenticated(false);
+                    }
+                }).catch((error) => {
+                    console.log('error in fetchData:', error)
+                    // setIsAuthenticated(false);
+                });
+        };
+        fetchData();
+    }, []);
 
-  const showDetail = (id) => {
-    navigate( '/showgame/' + id);
-    
-  }
 
-  return (
-    <div>
-      { data.length !== 0
-        ? <div>
-          {showLoading && <Spinner animation="border" role="status">
-            <span className="sr-only">Loading...</span>
-          </Spinner> }
-          <ListGroup>
-            {data.map((item, idx) => (
-              <ListGroup.Item key={idx} action onClick={() => { showDetail(item._id) }}>{item.title} ({item.releaseYear})</ListGroup.Item>
-            ))}
-          </ListGroup>
+    // const isLoggedIn = () => {
+
+    //   const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");;
+
+    //   return token !== '';
+
+    // }
+
+    // const removeGame = (id) => {
+    //     axios.post("/api/users/modifygameforUser/" + id);
+    // }
+
+    const showDetail = (id) => {
+        console.log('id:', id)
+        navigate('/showgame/' + id);
+    }
+
+    return (
+        <div>
+            {data.length !== 0
+                ? <div>
+                    {showLoading && <Spinner animation="border" role="status">
+                        <span className="sr-only">Loading...</span>
+                    </Spinner>}
+                    <ListGroup>
+                        {data.map((item, idx) => (
+                            // <ListGroup.Item key={idx} action onClick={() => { showDetail(item._id) }}>{item.title} ({item.releaseYear})</ListGroup.Item>
+                            <ListGroup.Item key={idx} >{item.title} ({item.releaseYear})
+                                {
+                                    (<Button variant="primary" onClick={() => showDetail(item._id)} style={{ marginLeft: '10px' }}>
+                                        Show Details
+                                    </Button>)
+                                }
+                            </ListGroup.Item>
+                        ))}
+                    </ListGroup>
+                </div>
+                : < Login />
+            }
         </div>
-        : < Login />
-      }
-    </div>
 
-  );
+    );
 }
 //
-export default ListGames;
+export default ListGamesForUser;

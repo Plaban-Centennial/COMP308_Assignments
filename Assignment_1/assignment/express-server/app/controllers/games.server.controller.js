@@ -42,6 +42,7 @@ exports.create = function (req, res) {
             res.status(200).json(game);
         }
     });
+
 };
 //
 

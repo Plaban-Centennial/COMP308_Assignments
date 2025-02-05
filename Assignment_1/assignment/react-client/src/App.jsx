@@ -66,6 +66,7 @@ function App() {
           <Route path="showgame/:id" element= {< ShowGame />}  />
           <Route path="editarticle/:id" element= {< EditArticle />}  />
           <Route path="creategame" element= {< AddGame />}  />
+          {/* <Route path="addgameforUser" element= {< AddGameToUser />}  /> */}
 
         </Routes>
       </div>

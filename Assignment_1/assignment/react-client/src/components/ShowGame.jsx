@@ -31,16 +31,25 @@ function ShowGame(props) {
     
   };
 
-  const deleteGame = (id) => {
-    setShowLoading(true);
-    const game = {title: data.title, genre: data.genre, platform: data.platform , releaseYear: data.releaseYear, developer: data.developer, rating: data.rating, description: data.description };
-    //
-    axios.delete(apiUrl, game)
-      .then((result) => {
-        setShowLoading(false);
-        navigate('/listgames')
-      }).catch((error) => setShowLoading(false));
-  };
+  // const deleteGame = (id) => {
+  //   setShowLoading(true);
+  //   const game = {title: data.title, genre: data.genre, platform: data.platform , releaseYear: data.releaseYear, developer: data.developer, rating: data.rating, description: data.description };
+  //   //
+  //   axios.delete(apiUrl, game)
+  //     .then((result) => {
+  //       setShowLoading(false);
+  //       navigate('/listgames')
+  //     }).catch((error) => setShowLoading(false));
+  // };
+
+  const removeGame = (id) => {
+    axios.delete("/api/users/modifygameforUser/" + id).then((result) => {
+      console.log('results from save game:', result.data)
+      navigate('/login/')
+
+    }).catch((error) => setShowLoading(false));
+;
+  }
 
   return (
     <div>
@@ -57,7 +66,7 @@ function ShowGame(props) {
         
         <p>
           {/* <Button type="button" variant="primary" onClick={() => { editArticle(data._id) }}>Edit</Button>&nbsp; */}
-          <Button type="button" variant="danger" onClick={() => { deleteGame(data._id) }}>Delete</Button>
+          <Button type="button" variant="danger" onClick={() => { removeGame(data._id) }}>Delete</Button>
         </p>
    </div>
   );
