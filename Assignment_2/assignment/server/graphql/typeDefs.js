@@ -80,6 +80,7 @@ const typeDefs = `#graphql
     # User queries
     users: [User]
     user(id: ID!): User
+    currentUser: User
 
     # Player queries
     players: [Player]
@@ -93,6 +94,7 @@ const typeDefs = `#graphql
   # Mutation type definition
   type Mutation {
     # User mutations
+    login(email: String!, password: String!): User
     addUser(username: String!, email: String!, password: String!, role: String!): User
     updateUser(id: ID!, username: String, email: String, password: String, role: String): User
     deleteUser(id: ID!): User

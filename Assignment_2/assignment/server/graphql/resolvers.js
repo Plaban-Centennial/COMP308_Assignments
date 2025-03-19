@@ -1,114 +1,24 @@
-// // resolvers.js Code for the resolvers of the GraphQL server
-// const Student = require('../models/Student');
-
-// const resolvers = {
-//   Query: {
-//     students: async () => {
-//       try {
-//         const students = await Student.find();
-//         return students.map((student) => ({
-//           id: student._id.toString(), // Convert MongoDB `_id` to GraphQL `id`
-//           ...student.toObject(),
-//         }));
-//       } catch (error) {
-//         console.error('Error fetching students:', error);
-//         throw new Error('Failed to fetch students');
-//       }
-//     },
-//     student: async (_, { id }) => {
-//       try {
-//         const student = await Student.findById(id);
-//         if (!student) {
-//           throw new Error(`Student with ID ${id} not found`);
-//         }
-//         return {
-//           id: student._id.toString(), // Convert MongoDB `_id` to GraphQL `id`
-//           ...student.toObject(),
-//         };
-//       } catch (error) {
-//         console.error('Error fetching student by ID:', error);
-//         throw new Error('Failed to fetch student');
-//       }
-//     },
-//   },
-//   Mutation: {
-//     addStudent: async (_, args) => {
-//       try {
-//         const student = new Student(args);
-//         const newStudent = await student.save();
-//         return {
-//           id: newStudent._id.toString(), // Convert MongoDB `_id` to GraphQL `id`
-//           ...newStudent.toObject(),
-//         };
-//       } catch (error) {
-//         console.error('Error adding student:', error);
-//         throw new Error('Failed to add student');
-//       }
-//     },
-//     updateStudent: async (_, { id, ...update }) => {
-//       try {
-//         const updatedStudent = await Student.findByIdAndUpdate(id, update, { new: true });
-//         if (!updatedStudent) {
-//           throw new Error(`Student with ID ${id} not found`);
-//         }
-//         return {
-//           id: updatedStudent._id.toString(), // Convert MongoDB `_id` to GraphQL `id`
-//           ...updatedStudent.toObject(),
-//         };
-//       } catch (error) {
-//         console.error('Error updating student:', error);
-//         throw new Error('Failed to update student');
-//       }
-//     },
-//     deleteStudent: async (_, { id }) => {
-//       try {
-//         const deletedStudent = await Student.findByIdAndDelete(id);
-//         if (!deletedStudent) {
-//           throw new Error(`Student with ID ${id} not found`);
-//         }
-//         return {
-//           id: deletedStudent._id.toString(), // Convert MongoDB `_id` to GraphQL `id`
-//           ...deletedStudent.toObject(),
-//         };
-//       } catch (error) {
-//         console.error('Error deleting student:', error);
-//         throw new Error('Failed to delete student');
-//       }
-//     },
-//     deleteStudentByEmail: async (_, { email }) => {
-//       try {
-//         const deletedStudent = await Student.findOneAndDelete({ email });
-//         if (!deletedStudent) {
-//           throw new Error(`Student with email ${email} not found`);
-//         }
-//         return {
-//           id: deletedStudent._id.toString(),
-//           ...deletedStudent.toObject(),
-//         };
-//       } catch (error) {
-//         console.error('Error deleting student:', error);
-//         throw new Error('Failed to delete student');
-//       }
-//     },
-
-//   },
-// };
-
 // module.exports = resolvers;
 const User = require('../models/user');
 const Player = require('../models/player');
 const Tournament = require('../models/tournament');
+const authMiddleware = require('../middleware/auth');
+const bcrypt = require('bcrypt'); // Import bcrypt
+const { generateToken } = require('../utils/tokenUtils');
 
 const resolvers = {
   Query: {
     // Fetch all users
     users: async () => {
       try {
-        const users = await User.find();
-        return users.map((user) => ({
-          id: user._id.toString(),
-          ...user.toObject(),
-        }));
+        currentUser: async (_, __, { req }) => {
+          const user = authMiddleware(req);
+          const users = await User.find();
+          return users.map((user) => ({
+            id: user._id.toString(),
+            ...user.toObject(),
+          }))
+        };
       } catch (error) {
         console.error('Error fetching users:', error);
         throw new Error('Failed to fetch users');
@@ -190,6 +100,42 @@ const resolvers = {
     },
   },
   Mutation: {
+    //Login
+    login: async (_, { email, password }, { res }) => {
+      try {
+        // Find the user by email
+        const user = await User.findOne({ email });
+        if (!user) {
+          throw new Error('Invalid email or password');
+        }
+
+        // Compare the provided password with the hashed password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+          throw new Error('Invalid email or password');
+        }
+
+        // Generate a JWT token
+        const token = generateToken(user);
+
+        // Set the token in an HTTPOnly cookie
+        res.cookie('token', token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+          maxAge: 24 * 60 * 60 * 1000, // 1 day
+        });
+
+        return {
+          id: user._id.toString(),
+          username: user.username,
+          email: user.email,
+          role: user.role,
+        };
+      } catch (error) {
+        console.error('Error during login:', error.message);
+        throw new Error('Failed to login');
+      }
+    },
     // Add a new user
     addUser: async (_, { username, email, password, role }) => {
       try {
@@ -205,7 +151,11 @@ const resolvers = {
       }
     },
     // Update an existing user
-    updateUser: async (_, { id, ...update }) => {
+    updateUser: async (_, { id, ...update }, { req }) => {
+      const user = authMiddleware(req); // Authenticate the user
+      if (user.role !== 'Admin') {
+        throw new Error('Unauthorized');
+      }
       try {
         const updatedUser = await User.findByIdAndUpdate(id, update, { new: true });
         if (!updatedUser) {
@@ -221,7 +171,12 @@ const resolvers = {
       }
     },
     // Delete a user
-    deleteUser: async (_, { id }) => {
+    deleteUser: async (_, { id }, { req }) => {
+      const user = authMiddleware(req); // Authenticate the user
+      if (user.role !== 'Admin') {
+        throw new Error('Unauthorized');
+      }
+
       try {
         const deletedUser = await User.findByIdAndDelete(id);
         if (!deletedUser) {
