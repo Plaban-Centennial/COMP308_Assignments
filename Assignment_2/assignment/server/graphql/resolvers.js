@@ -11,14 +11,11 @@ const resolvers = {
     // Fetch all users
     users: async () => {
       try {
-        currentUser: async (_, __, { req }) => {
-          const user = authMiddleware(req);
-          const users = await User.find();
-          return users.map((user) => ({
-            id: user._id.toString(),
-            ...user.toObject(),
-          }))
-        };
+        const users = await User.find();
+        return users.map((user) => ({
+          id: user._id.toString(),
+          ...user.toObject(),
+        }));
       } catch (error) {
         console.error('Error fetching users:', error);
         throw new Error('Failed to fetch users');
