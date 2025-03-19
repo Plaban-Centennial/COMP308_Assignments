@@ -1,36 +1,140 @@
 import React from 'react';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, useMutation, gql } from '@apollo/client';
 
-const GET_TOURNAMENTS = gql`
-  query GetTournaments {
-    tournaments {
+const GET_UPCOMING_TOURNAMENTS = gql`
+  query GetUpcomingTournaments {
+    tournaments(status: "Upcoming") {
       id
       name
-      game
       date
-      status
+    }
+  }
+`;
+
+const GET_JOINED_TOURNAMENTS = gql`
+  query GetJoinedTournaments($playerId: ID!) {
+    player(id: $playerId) {
+      tournaments {
+        id
+        name
+        date
+      }
+    }
+  }
+`;
+
+const JOIN_TOURNAMENT = gql`
+  mutation JoinTournament($tournamentId: ID!, $playerId: ID!) {
+    joinTournament(tournamentId: $tournamentId, playerId: $playerId) {
+      id
+      name
+      players {
+        id
+        username
+      }
     }
   }
 `;
 
 const Tournaments = () => {
-  const { loading, error, data } = useQuery(GET_TOURNAMENTS);
+  const user = JSON.parse(localStorage.getItem('user')); // Get logged-in user info
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  // Use playerId if the user is of type Player
+  const playerId = user?.role === 'Player' ? user.playerId : null;
+
+  const { data: upcomingData, loading: loadingUpcoming, error: errorUpcoming } = useQuery(GET_UPCOMING_TOURNAMENTS);
+  const { data: joinedData, loading: loadingJoined, error: errorJoined } = useQuery(GET_JOINED_TOURNAMENTS, {
+    variables: { playerId },
+    skip: !playerId, // Skip query if playerId is not available
+  });
+
+  const [joinTournament] = useMutation(JOIN_TOURNAMENT);
+
+  const handleJoin = async (tournamentId) => {
+    if (!playerId) {
+      alert('Only authenticated players can join tournaments.');
+      return;
+    }
+
+    try {
+      await joinTournament({
+        variables: {
+          tournamentId,
+          playerId,
+        },
+      });
+      alert('Successfully joined the tournament!');
+    } catch (err) {
+      console.error('Error joining tournament:', err);
+      alert(err.message || 'Failed to join tournament.');
+    }
+  };
+
+  if (loadingUpcoming || loadingJoined) return <p>Loading tournaments...</p>;
+  if (errorUpcoming || errorJoined) return <p style={styles.error}>Error: {errorUpcoming?.message || errorJoined?.message}</p>;
 
   return (
-    <div>
+    <div style={styles.container}>
+      <h1>My Joined Tournaments</h1>
+      <ul>
+        {joinedData?.player?.tournaments?.length > 0 ? (
+          joinedData.player.tournaments.map((tournament) => (
+            <li key={tournament.id} style={styles.tournamentItem}>
+              <span>
+                {tournament.name} - {new Date(tournament.date).toLocaleDateString()}
+              </span>
+            </li>
+          ))
+        ) : (
+          <p>You have not joined any tournaments yet.</p>
+        )}
+      </ul>
+
       <h1>Upcoming Tournaments</h1>
       <ul>
-        {data.tournaments.map((tournament) => (
-          <li key={tournament.id}>
-            {tournament.name} - {tournament.game} - {tournament.date} - {tournament.status}
+        {upcomingData?.tournaments?.map((tournament) => (
+          <li key={tournament.id} style={styles.tournamentItem}>
+            <span>
+              {tournament.name} - {new Date(tournament.date).toLocaleDateString()}
+            </span>
+            {playerId && (
+              <button
+                style={styles.joinButton}
+                onClick={() => handleJoin(tournament.id)}
+              >
+                Join
+              </button>
+            )}
           </li>
         ))}
       </ul>
     </div>
   );
+};
+
+const styles = {
+  container: {
+    textAlign: 'center',
+    padding: '20px',
+  },
+  error: {
+    color: 'red',
+    fontWeight: 'bold',
+  },
+  tournamentItem: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '10px',
+  },
+  joinButton: {
+    backgroundColor: '#007BFF',
+    color: 'white',
+    border: 'none',
+    padding: '5px 10px',
+    borderRadius: '5px',
+    cursor: 'pointer',
+  },
 };
 
 export default Tournaments;

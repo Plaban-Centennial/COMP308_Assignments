@@ -1,13 +1,13 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Outlet } from 'react-router-dom';
 
-const Home = () => {
+const Layout = () => {
   const user = JSON.parse(localStorage.getItem('user')); // Get user info from localStorage
   const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem('user'); // Remove user info from localStorage
-    navigate('/'); // Redirect to home page
+    navigate('/login'); // Redirect to login page
   };
 
   return (
@@ -32,35 +32,8 @@ const Home = () => {
       </nav>
 
       {/* Main Content */}
-      <div style={styles.container}>
-        <h1 style={styles.heading}>Welcome to the Tournament Management System</h1>
-        <p style={styles.description}>
-          Manage tournaments, register players, and view tournament history with ease.
-        </p>
-        <div style={styles.links}>
-          {!user && (
-            <>
-              <Link to="/login" style={styles.link}>
-                Login
-              </Link>
-              <Link to="/register" style={styles.link}>
-                Register
-              </Link>
-            </>
-          )}
-          {user && user.role !== 'Admin' && (
-            <>
-              <Link to="/tournaments" style={styles.link}>
-                View Tournaments
-              </Link>
-            </>
-          )}
-          {user && user.role === 'Admin' && (
-            <Link to="/admin" style={styles.link}>
-              Admin Dashboard
-            </Link>
-          )}
-        </div>
+      <div style={styles.content}>
+        <Outlet /> {/* Render child components here */}
       </div>
     </>
   );
@@ -68,7 +41,7 @@ const Home = () => {
 
 const styles = {
   navbar: {
-    position: 'fixed', // Make the navbar fixed
+    position: 'fixed',
     top: 0,
     left: 0,
     width: '100%',
@@ -78,7 +51,7 @@ const styles = {
     padding: '10px 20px',
     backgroundColor: '#007BFF',
     color: 'white',
-    zIndex: 1000, // Ensure it stays above other elements
+    zIndex: 1000,
   },
   logo: {
     fontSize: '1.5rem',
@@ -108,34 +81,10 @@ const styles = {
     cursor: 'pointer',
     fontSize: '1rem',
   },
-  container: {
-    textAlign: 'center',
-    padding: '50px',
-    fontFamily: 'Arial, sans-serif',
+  content: {
     marginTop: '80px', // Add margin to avoid overlap with the fixed navbar
-  },
-  heading: {
-    fontSize: '2.5rem',
-    marginBottom: '20px',
-  },
-  description: {
-    fontSize: '1.2rem',
-    marginBottom: '30px',
-  },
-  links: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '20px',
-    marginTop: '20px',
-  },
-  link: {
-    textDecoration: 'none',
-    color: 'white',
-    backgroundColor: '#007BFF',
-    padding: '10px 20px',
-    borderRadius: '5px',
-    fontSize: '1rem',
+    padding: '20px',
   },
 };
 
-export default Home;
+export default Layout;

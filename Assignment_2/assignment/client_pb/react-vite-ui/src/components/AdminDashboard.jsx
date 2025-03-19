@@ -44,7 +44,7 @@ const AdminDashboard = () => {
       <ul>
         {tournaments.map((tournament) => (
           <li key={tournament.id}>
-            {tournament.name} - {tournament.game} - {tournament.date} - {tournament.status}
+            {tournament.name} - {tournament.game} - {new Date(tournament.date).toLocaleDateString()} - {tournament.status}
           </li>
         ))}
       </ul>

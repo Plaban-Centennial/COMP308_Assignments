@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
 
 const REGISTER_MUTATION = gql`
   mutation Register($username: String!, $email: String!, $password: String!) {
@@ -14,14 +15,17 @@ const REGISTER_MUTATION = gql`
 const Register = () => {
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
   const [register] = useMutation(REGISTER_MUTATION);
+  const navigate = useNavigate(); // Initialize the navigate function
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const { data } = await register({ variables: formData });
       alert(`User registered: ${data.addUser.username}`);
+      navigate('/'); // Redirect to the home page after successful registration
     } catch (error) {
       console.error('Error registering user:', error);
+      alert('Failed to register. Please try again.');
     }
   };
 

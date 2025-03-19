@@ -87,14 +87,15 @@ const typeDefs = `#graphql
     player(id: ID!): Player
 
     # Tournament queries
-    tournaments: [Tournament]
+    tournaments(status: String): [Tournament]
     tournament(id: ID!): Tournament
+    
   }
 
   # Mutation type definition
   type Mutation {
     # User mutations
-    login(email: String!, password: String!): User
+    login(username: String!, password: String!): User
     addUser(username: String!, email: String!, password: String!, role: String!): User
     updateUser(id: ID!, username: String, email: String, password: String, role: String): User
     deleteUser(id: ID!): User
@@ -108,6 +109,7 @@ const typeDefs = `#graphql
     addTournament(name: String!, game: String!, date: String!, players: [ID!], status: String!): Tournament
     updateTournament(id: ID!, name: String, game: String, date: String, players: [ID!], status: String): Tournament
     deleteTournament(id: ID!): Tournament
+    joinTournament(tournamentId: ID!, userId: ID!): Tournament
   }
 `;
 

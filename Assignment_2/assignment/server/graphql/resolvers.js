@@ -71,11 +71,22 @@ const resolvers = {
     },
     // Fetch all tournaments
     tournaments: async () => {
+      const tournaments = await Tournament.find();
+      return tournaments.map((tournament) => ({
+        id: tournament._id.toString(), // Map MongoDB _id to GraphQL id
+        name: tournament.name,
+        game: tournament.game,
+        date: tournament.date,
+        status: tournament.status,
+      }));
+    },
+    tournaments: async () => {
       try {
         const tournaments = await Tournament.find().populate('players');
         return tournaments.map((tournament) => ({
           id: tournament._id.toString(),
           ...tournament.toObject(),
+          date: tournament.date.toISOString(), // Ensure ISO format
         }));
       } catch (error) {
         console.error('Error fetching tournaments:', error);
@@ -92,27 +103,36 @@ const resolvers = {
         return {
           id: tournament._id.toString(),
           ...tournament.toObject(),
+          date: tournament.date.toISOString(), // Ensure ISO format
         };
       } catch (error) {
         console.error('Error fetching tournament:', error);
         throw new Error('Failed to fetch tournament');
       }
     },
+    tournaments: async (_, { status }) => {
+      const query = status ? { status } : {};
+      const tournaments = await Tournament.find(query);
+      return tournaments.map((tournament) => ({
+        ...tournament.toObject(),
+        date: tournament.date.toISOString(), // Ensure ISO format
+      }));
+    },
   },
   Mutation: {
     //Login
-    login: async (_, { email, password }, { res }) => {
+    login: async (_, { username, password }, { res }) => {
       try {
         // Find the user by email
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ username });
         if (!user) {
-          throw new Error('Invalid email or password');
+          throw new Error('Invalid username or password');
         }
 
         // Compare the provided password with the hashed password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-          throw new Error('Invalid email or password');
+          throw new Error('Invalid username or password');
         }
 
         // Generate a JWT token
