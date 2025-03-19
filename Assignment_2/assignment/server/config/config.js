@@ -20,7 +20,7 @@ const env = process.env.NODE_ENV || 'development';
 
 const config = {
   development: {
-    db: process.env.MONGO_URI || 'mongodb://localhost:27017/crud-graphql-db-2024',
+    db: process.env.MONGO_URI || 'mongodb://localhost:27017/assignment-2-pb',
     sessionSecret: process.env.SESSION_SECRET || 'developmentSessionSecret',
   },
   production: {
@@ -28,7 +28,7 @@ const config = {
     sessionSecret: process.env.SESSION_SECRET, // Ensure SESSION_SECRET is set in production
   },
   test: {
-    db: process.env.MONGO_URI_TEST || 'mongodb://localhost:27017/test-crud-graphql-db',
+    db: process.env.MONGO_URI_TEST || 'mongodb://localhost:27017/test-assignment-2-pb',
     sessionSecret: 'testSessionSecret',
   },
 };

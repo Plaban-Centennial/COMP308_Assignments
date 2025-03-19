@@ -1,48 +1,111 @@
-// typeDefs.js is a file that contains the GraphQL 
-// schema definition language (SDL) that defines the types, 
-// queries, and mutations that the GraphQL server supports. 
-// The schema is defined using the GraphQL schema definition 
-// language (SDL).
+// // typeDefs.js is a file that contains the GraphQL 
+// // schema definition language (SDL) that defines the types, 
+// // queries, and mutations that the GraphQL server supports. 
+// // The schema is defined using the GraphQL schema definition 
+// // language (SDL).
+// const typeDefs = `#graphql
+//   type Student {
+//     id: ID!
+//     firstName: String!
+//     lastName: String!
+//     email: String!
+//     college: String!
+//     program: String!
+//     startingYear: Int!
+//   }
+
+//   type Query {
+//     students: [Student]
+//     student(id: ID!): Student
+//   }
+
+//   type Mutation {
+
+//     addStudent(
+//       firstName: String!
+//       lastName: String!
+//       email: String!
+//       college: String!
+//       program: String!
+//       startingYear: Int!
+//     ): Student
+
+//     updateStudent(
+//       id: ID!
+//       firstName: String!
+//       lastName: String!
+//       email: String!
+//       college: String!
+//       program: String!
+//       startingYear: Int!
+//     ): Student
+
+//     deleteStudent(id: ID!): Student
+
+//     deleteStudentByEmail(email: String!): Student
+//   }
+// `;
+
+// module.exports = typeDefs;
 const typeDefs = `#graphql
-  type Student {
+  # User type definition
+  type User {
     id: ID!
-    firstName: String!
-    lastName: String!
+    username: String!
     email: String!
-    college: String!
-    program: String!
-    startingYear: Int!
+    password: String!
+    role: String!
   }
 
+  # Player type definition
+  type Player {
+    id: ID!
+    user: User!
+    ranking: Int!
+    tournaments: [Tournament]
+  }
+
+  # Tournament type definition
+  type Tournament {
+    id: ID!
+    name: String!
+    game: String!
+    date: String!
+    players: [Player]
+    status: String!
+  }
+
+  # Query type definition
   type Query {
-    students: [Student]
-    student(id: ID!): Student
+    # User queries
+    users: [User]
+    user(id: ID!): User
+
+    # Player queries
+    players: [Player]
+    player(id: ID!): Player
+
+    # Tournament queries
+    tournaments: [Tournament]
+    tournament(id: ID!): Tournament
   }
 
+  # Mutation type definition
   type Mutation {
-  
-    addStudent(
-      firstName: String!
-      lastName: String!
-      email: String!
-      college: String!
-      program: String!
-      startingYear: Int!
-    ): Student
-    
-    updateStudent(
-      id: ID!
-      firstName: String!
-      lastName: String!
-      email: String!
-      college: String!
-      program: String!
-      startingYear: Int!
-    ): Student
-    
-    deleteStudent(id: ID!): Student
-    
-    deleteStudentByEmail(email: String!): Student
+    # User mutations
+    addUser(username: String!, email: String!, password: String!, role: String!): User
+    updateUser(id: ID!, username: String, email: String, password: String, role: String): User
+    deleteUser(id: ID!): User
+
+    # Player mutations
+    addPlayer(userId: ID!, ranking: Int!, tournaments: [ID!]): Player
+    updatePlayer(id: ID!, ranking: Int, tournaments: [ID!]): Player
+    deletePlayer(id: ID!): Player
+
+    # Tournament mutations
+    addTournament(name: String!, game: String!, date: String!, players: [ID!], status: String!): Tournament
+    updateTournament(id: ID!, name: String, game: String, date: String, players: [ID!], status: String): Tournament
+    deleteTournament(id: ID!): Tournament
   }
 `;
 
