@@ -29,7 +29,7 @@ const startServer = async () => {
   app.use(cookieParser()); // Parse cookies
   app.use(
     cors({
-      origin: ['http://localhost:3000', 'https://studio.apollographql.com'], // Allow frontend and Apollo Studio
+      origin: ['http://localhost:5173', 'https://studio.apollographql.com'], // Allow frontend and Apollo Studio
       credentials: true, // Allow credentials (cookies)
     })
   );
