@@ -66,12 +66,21 @@ const Tournaments = () => {
       alert('Successfully joined the tournament!');
     } catch (err) {
       console.error('Error joining tournament:', err);
-      alert(err.message || 'Failed to join tournament.');
+      if (err.message.includes('already joined')) {
+        alert('You have already joined this tournament.');
+      } else {
+        alert('Failed to join the tournament. Please try again later.');
+      }
     }
   };
 
   if (loadingUpcoming || loadingJoined) return <p>Loading tournaments...</p>;
-  if (errorUpcoming || errorJoined) return <p style={styles.error}>Error: {errorUpcoming?.message || errorJoined?.message}</p>;
+
+  if (errorUpcoming || errorJoined) {
+    const errorMessage =
+      errorUpcoming?.message || errorJoined?.message || 'An unexpected error occurred.';
+    return <p style={styles.error}>Error: {errorMessage}</p>;
+  }
 
   return (
     <div style={styles.container}>
@@ -92,21 +101,25 @@ const Tournaments = () => {
 
       <h1>Upcoming Tournaments</h1>
       <ul>
-        {upcomingData?.tournaments?.map((tournament) => (
-          <li key={tournament.id} style={styles.tournamentItem}>
-            <span>
-              {tournament.name} - {new Date(tournament.date).toLocaleDateString()}
-            </span>
-            {playerId && (
-              <button
-                style={styles.joinButton}
-                onClick={() => handleJoin(tournament.id)}
-              >
-                Join
-              </button>
-            )}
-          </li>
-        ))}
+        {upcomingData?.tournaments?.length > 0 ? (
+          upcomingData.tournaments.map((tournament) => (
+            <li key={tournament.id} style={styles.tournamentItem}>
+              <span>
+                {tournament.name} - {new Date(tournament.date).toLocaleDateString()}
+              </span>
+              {playerId && (
+                <button
+                  style={styles.joinButton}
+                  onClick={() => handleJoin(tournament.id)}
+                >
+                  Join
+                </button>
+              )}
+            </li>
+          ))
+        ) : (
+          <p>No upcoming tournaments.</p>
+        )}
       </ul>
     </div>
   );
