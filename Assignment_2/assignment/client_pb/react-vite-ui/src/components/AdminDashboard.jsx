@@ -48,7 +48,9 @@ const AdminDashboard = () => {
     console.error('Error fetching users:', errorUsers.message);
     return (
       <div>
-        <h1>Admin Dashboard</h1>
+        <nav style={{ backgroundColor: '#f4f4f4', padding: '10px', marginBottom: '20px' }}>
+          <h1 style={{ margin: 0, display: 'inline', marginRight: '20px' }}>Admin Dashboard</h1>
+        </nav>
         <p style={{ color: 'red' }}>
           Unable to fetch users. Please try again later or contact support if the issue persists.
         </p>
@@ -60,7 +62,9 @@ const AdminDashboard = () => {
     console.error('Error fetching tournaments:', errorTournaments.message);
     return (
       <div>
-        <h1>Admin Dashboard</h1>
+        <nav style={{ backgroundColor: '#f4f4f4', padding: '10px', marginBottom: '20px' }}>
+          <h1 style={{ margin: 0, display: 'inline', marginRight: '20px' }}>Admin Dashboard</h1>
+        </nav>
         <p style={{ color: 'red' }}>
           Unable to fetch tournaments. Please try again later or contact support if the issue persists.
         </p>
@@ -74,7 +78,25 @@ const AdminDashboard = () => {
 
   return (
     <div>
-      <h1>Admin Dashboard</h1>
+      {/* Menu Bar */}
+      <nav style={{ backgroundColor: '#f4f4f4', padding: '10px', marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
+        <h1 style={{ margin: 0, marginRight: '20px' }}>Admin Dashboard</h1>
+        <ul style={{ display: 'flex', listStyle: 'none', padding: 0, margin: 0 }}>
+          <li style={{ marginRight: '20px' }}>
+            <a href="/" style={{ textDecoration: 'none', color: 'blue' }}>Home</a>
+          </li>
+          <li style={{ marginRight: '20px' }}>
+            <a href="/create-user" style={{ textDecoration: 'none', color: 'blue' }}>Create User</a>
+          </li>
+          <li style={{ marginRight: '20px' }}>
+            <a href="/create-tournament" style={{ textDecoration: 'none', color: 'blue' }}>Create Tournament</a>
+          </li>
+          <li>
+            <a href="/assign-player" style={{ textDecoration: 'none', color: 'blue' }}>Assign Player to Tournaments</a>
+          </li>
+        </ul>
+      </nav>
+
       <h2>Users</h2>
       {users.length > 0 ? (
         <ul>
