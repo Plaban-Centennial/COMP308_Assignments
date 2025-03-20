@@ -71,8 +71,8 @@ const typeDefs = `#graphql
     name: String!
     game: String!
     date: String!
-    players: [Player]
     status: String!
+    players: [Player!]
   }
 
   # Query type definition
@@ -87,7 +87,7 @@ const typeDefs = `#graphql
     player(id: ID!): Player
 
     # Tournament queries
-    tournaments(status: String): [Tournament]
+    tournaments: [Tournament]
     tournament(id: ID!): Tournament
     
   }

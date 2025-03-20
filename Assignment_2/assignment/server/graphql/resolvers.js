@@ -14,7 +14,10 @@ const resolvers = {
         const users = await User.find();
         return users.map((user) => ({
           id: user._id.toString(),
-          ...user.toObject(),
+          username: user.username, // Ensure this field is returned
+          email: user.email,
+          password: user.password,
+          role: user.role,
         }));
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -30,7 +33,10 @@ const resolvers = {
         }
         return {
           id: user._id.toString(),
-          ...user.toObject(),
+          username: user.username, // Ensure this field is returned
+          email: user.email,
+          password: user.password,
+          role: user.role,
         };
       } catch (error) {
         console.error('Error fetching user:', error);
@@ -43,7 +49,20 @@ const resolvers = {
         const players = await Player.find().populate('user tournaments');
         return players.map((player) => ({
           id: player._id.toString(),
-          ...player.toObject(),
+          user: {
+            id: player.user._id.toString(),
+            username: player.user.username,
+            email: player.user.email,
+            role: player.user.role,
+          },
+          ranking: player.ranking,
+          tournaments: player.tournaments.map((tournament) => ({
+            id: tournament._id.toString(),
+            name: tournament.name,
+            game: tournament.game,
+            date: tournament.date.toISOString(),
+            status: tournament.status,
+          })),
         }));
       } catch (error) {
         console.error('Error fetching players:', error);
@@ -59,61 +78,117 @@ const resolvers = {
         }
         return {
           id: player._id.toString(),
-          ...player.toObject(),
+          user: {
+            id: player.user._id.toString(),
+            username: player.user.username,
+            email: player.user.email,
+            role: player.user.role,
+          },
+          ranking: player.ranking,
+          tournaments: player.tournaments.map((tournament) => ({
+            id: tournament._id.toString(),
+            name: tournament.name,
+            game: tournament.game,
+            date: tournament.date.toISOString(),
+            status: tournament.status,
+          })),
         };
       } catch (error) {
         console.error('Error fetching player:', error);
         throw new Error('Failed to fetch player');
       }
     },
-    // Fetch all tournaments
-    tournaments: async () => {
-      const tournaments = await Tournament.find();
-      return tournaments.map((tournament) => ({
-        id: tournament._id.toString(), // Map MongoDB _id to GraphQL id
-        name: tournament.name,
-        game: tournament.game,
-        date: tournament.date,
-        status: tournament.status,
-      }));
-    },
-    tournaments: async () => {
-      try {
-        const tournaments = await Tournament.find().populate('players');
-        return tournaments.map((tournament) => ({
-          id: tournament._id.toString(),
-          ...tournament.toObject(),
-          date: tournament.date.toISOString(), // Ensure ISO format
-        }));
-      } catch (error) {
-        console.error('Error fetching tournaments:', error);
-        throw new Error('Failed to fetch tournaments');
-      }
-    },
+    // tournaments: async () => {
+    //   try {
+    //     const tournaments = await Tournament.find().populate('players');
+    //     console.log('Fetched Tournaments:', tournaments);
+    //     return tournaments.map((tournament) => ({
+    //       id: tournament._id.toString(), // Ensure the id field is returned as a string
+    //       name: tournament.name,
+    //       game: tournament.game,
+    //       date: tournament.date.toISOString(), // Convert date to ISO format
+    //       status: tournament.status,
+    //       players: tournament.players.map((player) => ({
+    //         id: player._id.toString(),
+    //         user: {
+    //           id: player.user._id.toString(),
+    //           username: player.user.username,
+    //           email: player.user.email,
+    //           role: player.user.role,
+    //         },
+    //         ranking: player.ranking,
+    //       })),
+    //     }));
+    //   } catch (error) {
+    //     console.error('Error fetching tournaments:', error);
+    //     throw new Error('Failed to fetch tournaments');
+    //   }
+    // },
     // Fetch a single tournament by ID
     tournament: async (_, { id }) => {
       try {
-        const tournament = await Tournament.findById(id).populate('players');
+        const tournament = await Tournament.findById(id).populate({
+          path: 'players',
+          populate: {
+            path: 'user',
+            model: 'User'
+          }
+        });
         if (!tournament) {
           throw new Error(`Tournament with ID ${id} not found`);
         }
         return {
-          id: tournament._id.toString(),
-          ...tournament.toObject(),
-          date: tournament.date.toISOString(), // Ensure ISO format
+          id: tournament._id.toString(), // Ensure the id field is returned as a string
+          name: tournament.name,
+          game: tournament.game,
+          date: tournament.date.toISOString(), // Convert date to ISO format
+          status: tournament.status,
+          players: tournament.players.map((player) => ({
+            id: player._id.toString(),
+            user: {
+              id: player.user._id.toString(),
+              username: player.user.username,
+              email: player.user.email,
+              role: player.user.role,
+            },
+            ranking: player.ranking,
+          })),
         };
       } catch (error) {
         console.error('Error fetching tournament:', error);
         throw new Error('Failed to fetch tournament');
       }
     },
-    tournaments: async (_, { status }) => {
-      const query = status ? { status } : {};
-      const tournaments = await Tournament.find(query);
-      return tournaments.map((tournament) => ({
-        ...tournament.toObject(),
-        date: tournament.date.toISOString(), // Ensure ISO format
-      }));
+    tournaments: async () => {
+      try {
+        const tournaments = await Tournament.find().populate({
+          path: 'players',
+          populate: {
+            path: 'user',
+            model: 'User'
+          }
+        });
+        return tournaments.map((tournament) => ({
+          id: tournament._id.toString(),
+          name: tournament.name,
+          game: tournament.game,
+          date: tournament.date.toISOString(),
+          status: tournament.status,
+          players: tournament.players.map((player) => ({
+            id: player._id.toString(),
+            user: {
+              id: player.user._id.toString(),
+              username: player.user.username,
+              email: player.user.email,
+              role: player.user.role,
+            },
+            ranking: player.ranking,
+          })),
+        }));
+      } catch (error) {
+        console.error('Error fetching tournaments:', error);
+        throw new Error('Failed to fetch tournaments');
+      }
     },
   },
   Mutation: {

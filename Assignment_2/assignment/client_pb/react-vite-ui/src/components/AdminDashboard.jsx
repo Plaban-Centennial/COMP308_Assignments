@@ -1,5 +1,6 @@
 import React from 'react';
 import { useQuery, gql } from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
 
 // Query to fetch all users
 const GET_ALL_USERS = gql`
@@ -27,6 +28,8 @@ const GET_ALL_TOURNAMENTS = gql`
 `;
 
 const AdminDashboard = () => {
+  const navigate = useNavigate(); // React Router's navigation hook
+
   // Fetch users
   const {
     loading: loadingUsers,
@@ -46,30 +49,12 @@ const AdminDashboard = () => {
 
   if (errorUsers) {
     console.error('Error fetching users:', errorUsers.message);
-    return (
-      <div>
-        <nav style={{ backgroundColor: '#f4f4f4', padding: '10px', marginBottom: '20px' }}>
-          <h1 style={{ margin: 0, display: 'inline', marginRight: '20px' }}>Admin Dashboard</h1>
-        </nav>
-        <p style={{ color: 'red' }}>
-          Unable to fetch users. Please try again later or contact support if the issue persists.
-        </p>
-      </div>
-    );
+    return <p style={{ color: 'red' }}>Unable to fetch users. Please try again later.</p>;
   }
 
   if (errorTournaments) {
     console.error('Error fetching tournaments:', errorTournaments.message);
-    return (
-      <div>
-        <nav style={{ backgroundColor: '#f4f4f4', padding: '10px', marginBottom: '20px' }}>
-          <h1 style={{ margin: 0, display: 'inline', marginRight: '20px' }}>Admin Dashboard</h1>
-        </nav>
-        <p style={{ color: 'red' }}>
-          Unable to fetch tournaments. Please try again later or contact support if the issue persists.
-        </p>
-      </div>
-    );
+    return <p style={{ color: 'red' }}>Unable to fetch tournaments. Please try again later.</p>;
   }
 
   // Safely handle cases where data might be null or undefined
@@ -97,25 +82,37 @@ const AdminDashboard = () => {
         </ul>
       </nav>
 
+      {/* Users Section */}
       <h2>Users</h2>
       {users.length > 0 ? (
         <ul>
           {users.map((user) => (
             <li key={user.id}>
-              {user.username} - {user.email} - {user.role}
+              <button
+                onClick={() => navigate(`/user/${user.id}`)} // Redirect to user details page
+                style={{ background: 'none', border: 'none', color: 'blue', cursor: 'pointer', textDecoration: 'underline' }}
+              >
+                {user.username}
+              </button>
             </li>
           ))}
         </ul>
       ) : (
         <p>No users found.</p>
       )}
+
+      {/* Tournaments Section */}
       <h2>Tournaments</h2>
       {tournaments.length > 0 ? (
         <ul>
           {tournaments.map((tournament) => (
             <li key={tournament.id}>
-              {tournament.name} - {tournament.game} -{' '}
-              {new Date(tournament.date).toLocaleDateString()} - {tournament.status}
+              <button
+                onClick={() => navigate(`/tournament/${tournament.id}`)} // Redirect to tournament details page
+                style={{ background: 'none', border: 'none', color: 'blue', cursor: 'pointer', textDecoration: 'underline' }}
+              >
+                {tournament.name}
+              </button>
             </li>
           ))}
         </ul>

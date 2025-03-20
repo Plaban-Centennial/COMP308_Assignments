@@ -34,6 +34,12 @@ const startServer = async () => {
     })
   );
 
+  // Middleware to set Referrer-Policy
+  app.use((req, res, next) => {
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin'); // Recommended policy
+    next();
+  });
+
   // Apollo Server
   const server = new ApolloServer({
     typeDefs,
