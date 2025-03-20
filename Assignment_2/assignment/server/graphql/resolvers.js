@@ -554,6 +554,58 @@ const resolvers = {
         throw new Error('Failed to delete tournament');
       }
     },
+    joinTournament: async (_, { tournamentId, playerId }) => {
+      try {
+        const tournament = await Tournament.findById(tournamentId);
+        if (!tournament) {
+          throw new Error(`Tournament with ID ${tournamentId} not found`);
+        }
+
+        const player = await Player.findById(playerId);
+        if (!player) {
+          throw new Error(`Player with ID ${playerId} not found`);
+        }
+
+        // Add player to the tournament if not already added
+        if (!tournament.players.includes(playerId)) {
+          tournament.players.push(playerId);
+          await tournament.save();
+        }
+
+        // Add tournament to the player's tournaments if not already added
+        if (!player.tournaments.includes(tournamentId)) {
+          player.tournaments.push(tournamentId);
+          await player.save();
+        }
+
+        // Populate the tournament with player details
+        const populatedTournament = await Tournament.findById(tournamentId).populate({
+          path: 'players',
+          populate: { path: 'user' },
+        });
+
+        return {
+          id: populatedTournament._id.toString(),
+          name: populatedTournament.name,
+          game: populatedTournament.game,
+          date: populatedTournament.date.toISOString(),
+          status: populatedTournament.status,
+          players: populatedTournament.players.map((player) => ({
+            id: player._id.toString(),
+            user: {
+              id: player.user._id.toString(),
+              username: player.user.username,
+              email: player.user.email,
+              role: player.user.role,
+            },
+            ranking: player.ranking,
+          })),
+        };
+      } catch (error) {
+        console.error('Error joining tournament:', error);
+        throw new Error('Failed to join tournament');
+      }
+    },
   },
 };
 

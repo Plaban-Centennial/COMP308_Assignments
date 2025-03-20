@@ -61,7 +61,7 @@ const typeDefs = `#graphql
     addTournament(name: String!, game: String!, date: String!, players: [ID!], status: String!): Tournament
     updateTournament(id: ID!, name: String, game: String, date: String, players: [ID!], status: String): Tournament
     deleteTournament(id: ID!): Tournament
-    joinTournament(tournamentId: ID!, userId: ID!): Tournament
+    joinTournament(tournamentId: ID!, playerId: ID!): Tournament  # New mutation to join a tournament
   }
 `;
 

@@ -1,6 +1,30 @@
 import React, { useState } from 'react';
-import { useMutation, gql } from '@apollo/client';
+import { useQuery, useMutation, gql } from '@apollo/client';
 import { NavLink } from 'react-router-dom';
+
+const GET_PLAYERS = gql`
+  query GetPlayers {
+    players {
+      id
+      user {
+        id
+        username
+      }
+    }
+  }
+`;
+
+const GET_TOURNAMENTS = gql`
+  query GetTournaments {
+    tournaments {
+      id
+      name
+      players {
+        id
+      }
+    }
+  }
+`;
 
 const ASSIGN_PLAYERS_MUTATION = gql`
   mutation AssignPlayers($tournamentId: ID!, $playerIds: [ID!]!) {
@@ -9,7 +33,9 @@ const ASSIGN_PLAYERS_MUTATION = gql`
       name
       players {
         id
-        username
+        user {
+          username
+        }
       }
     }
   }
@@ -17,6 +43,8 @@ const ASSIGN_PLAYERS_MUTATION = gql`
 
 const AssignPlayers = () => {
   const [formData, setFormData] = useState({ tournamentId: '', playerIds: [] });
+  const { data: playersData, loading: loadingPlayers, error: errorPlayers } = useQuery(GET_PLAYERS);
+  const { data: tournamentsData, loading: loadingTournaments, error: errorTournaments } = useQuery(GET_TOURNAMENTS);
   const [assignPlayers] = useMutation(ASSIGN_PLAYERS_MUTATION);
 
   const handleSubmit = async (e) => {
@@ -29,6 +57,19 @@ const AssignPlayers = () => {
       alert('Failed to assign players.');
     }
   };
+
+  if (loadingPlayers || loadingTournaments) return <p>Loading...</p>;
+  if (errorPlayers || errorTournaments) return <p>Error loading data.</p>;
+
+  // Filter out players who are already part of the selected tournament
+  const availablePlayers = formData.tournamentId
+    ? playersData.players.filter(
+        (player) =>
+          !tournamentsData.tournaments
+            .find((tournament) => tournament.id === formData.tournamentId)
+            .players.some((tournamentPlayer) => tournamentPlayer.id === player.id)
+      )
+    : playersData.players;
 
   return (
     <div>
@@ -63,20 +104,30 @@ const AssignPlayers = () => {
 
       {/* Form for Assigning Players */}
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Tournament ID"
+        <select
           value={formData.tournamentId}
           onChange={(e) => setFormData({ ...formData, tournamentId: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Player IDs (comma-separated)"
-          value={formData.playerIds.join(',')}
+        >
+          <option value="">Select Tournament</option>
+          {tournamentsData.tournaments.map((tournament) => (
+            <option key={tournament.id} value={tournament.id}>
+              {tournament.name}
+            </option>
+          ))}
+        </select>
+        <select
+          multiple
+          value={formData.playerIds}
           onChange={(e) =>
-            setFormData({ ...formData, playerIds: e.target.value.split(',') })
+            setFormData({ ...formData, playerIds: Array.from(e.target.selectedOptions, (option) => option.value) })
           }
-        />
+        >
+          {availablePlayers.map((player) => (
+            <option key={player.id} value={player.id}>
+              {player.user.username}
+            </option>
+          ))}
+        </select>
         <button type="submit">Assign Players</button>
       </form>
     </div>
