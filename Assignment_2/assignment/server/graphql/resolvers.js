@@ -90,6 +90,9 @@ const resolvers = {
             name: tournament.name,
             game: tournament.game,
             date: tournament.date.toISOString(),
+            players: tournament.players.map((player) => ({
+              id: player._id.toString(),
+            })),
             status: tournament.status,
           })),
         };
@@ -125,6 +128,31 @@ const resolvers = {
     //   }
     // },
     // Fetch a single tournament by ID
+    upcomingTournaments: async (_, { status }) => {
+      try {
+        const tournaments = await Tournament.find({ status }).populate('players');
+        return tournaments.map((tournament) => ({
+          id: tournament._id.toString(),
+          name: tournament.name,
+          game: tournament.game,
+          date: tournament.date.toISOString(),
+          status: tournament.status,
+          players: tournament.players.map((player) => ({
+            id: player._id.toString(),
+            user: {
+              id: player.user._id.toString(),
+              username: player.user.username,
+              email: player.user.email,
+              role: player.user.role,
+            },
+            ranking: player.ranking,
+          })),
+        }));
+      } catch (error) {
+        console.error('Error fetching upcoming tournaments:', error);
+        throw new Error('Failed to fetch upcoming tournaments');
+      }
+    },
     tournament: async (_, { id }) => {
       try {
         const tournament = await Tournament.findById(id).populate({
