@@ -1,5 +1,5 @@
 import React from 'react';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, useMutation, gql } from '@apollo/client';
 
 const GET_PLAYER_DETAILS = gql`
   query GetPlayerDetails($playerId: ID!) {
@@ -38,6 +38,22 @@ const GET_UPCOMING_TOURNAMENTS = gql`
   }
 `;
 
+const JOIN_TOURNAMENT = gql`
+  mutation JoinTournament($tournamentId: ID!, $playerId: ID!) {
+    joinTournament(tournamentId: $tournamentId, playerId: $playerId) {
+      id
+      name
+      players {
+        id
+        user {
+          id
+          username
+        }
+      }
+    }
+  }
+`;
+
 const Tournaments = () => {
   const user = JSON.parse(localStorage.getItem('user')); // Get logged-in user info
 
@@ -52,6 +68,28 @@ const Tournaments = () => {
   const { data: upcomingData, loading: loadingUpcoming, error: errorUpcoming } = useQuery(GET_UPCOMING_TOURNAMENTS, {
     variables: { status: "Upcoming" },
   });
+
+  const [joinTournament] = useMutation(JOIN_TOURNAMENT);
+
+  const handleJoin = async (tournamentId) => {
+    if (!playerId) {
+      alert('Only authenticated players can join tournaments.');
+      return;
+    }
+
+    try {
+      await joinTournament({
+        variables: {
+          tournamentId,
+          playerId,
+        },
+      });
+      alert('Successfully joined the tournament!');
+    } catch (err) {
+      console.error('Error joining tournament:', err);
+      alert('Failed to join the tournament. Please try again later.');
+    }
+  };
 
   if (loadingPlayer || loadingUpcoming) return <p>Loading tournaments...</p>;
 
@@ -68,7 +106,7 @@ const Tournaments = () => {
           playerData.player.tournaments.map((tournament) => (
             <li key={tournament.id} style={styles.tournamentItem}>
               <span>
-                {tournament.name} - {new Date(tournament.date).toLocaleDateString()}
+                {tournament.name} - {tournament.game} - {new Date(tournament.date).toLocaleDateString()}
               </span>
             </li>
           ))
@@ -83,8 +121,16 @@ const Tournaments = () => {
           upcomingData.upcomingTournaments.map((tournament) => (
             <li key={tournament.id} style={styles.tournamentItem}>
               <span>
-                {tournament.name} - {new Date(tournament.date).toLocaleDateString()}
+                {tournament.name} - {tournament.game} - {new Date(tournament.date).toLocaleDateString()}
               </span>
+              {playerId && (
+                <button
+                  style={styles.joinButton}
+                  onClick={() => handleJoin(tournament.id)}
+                >
+                  Join
+                </button>
+              )}
             </li>
           ))
         ) : (
@@ -109,6 +155,14 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: '10px',
+  },
+  joinButton: {
+    backgroundColor: '#007BFF',
+    color: 'white',
+    border: 'none',
+    padding: '5px 10px',
+    borderRadius: '5px',
+    cursor: 'pointer',
   },
 };
 

@@ -12,16 +12,39 @@ const REGISTER_MUTATION = gql`
   }
 `;
 
+const ADD_PLAYER_MUTATION = gql`
+ mutation AddPlayer($userId: ID!, $ranking: Int!, $tournaments: [ID!]) {
+  addPlayer(userId: $userId, ranking: $ranking, tournaments: $tournaments) {
+    id
+    user {
+      id
+      username
+      email
+    }
+    ranking
+    tournaments {
+      id
+      name
+    }
+  }
+}
+`;
+
+
+
 const Register = () => {
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
   const [register] = useMutation(REGISTER_MUTATION);
+  const [addPlayer] = useMutation(ADD_PLAYER_MUTATION);
   const navigate = useNavigate(); // Initialize the navigate function
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const { data } = await register({ variables: formData });
-      alert(`User registered: ${data.addUser.username}`);
+      const userId = data.addUser.id;
+      await addPlayer({ variables: { userId: userId, ranking: 1, tournaments: [] } });
+      alert(`User registered and player added: ${data.addUser.username}`);
       navigate('/'); // Redirect to the home page after successful registration
     } catch (error) {
       console.error('Error registering user:', error);
