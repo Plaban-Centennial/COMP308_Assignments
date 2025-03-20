@@ -606,6 +606,62 @@ const resolvers = {
         throw new Error('Failed to join tournament');
       }
     },
+    assignTournamentPlayers: async (_, { tournamentId, playerIds }) => {
+      try {
+        const tournament = await Tournament.findById(tournamentId);
+        if (!tournament) {
+          throw new Error(`Tournament with ID ${tournamentId} not found`);
+        }
+
+        const players = await Player.find({ _id: { $in: playerIds } });
+        if (players.length !== playerIds.length) {
+          throw new Error('One or more Player IDs are invalid');
+        }
+
+        // Add players to the tournament if not already added
+        playerIds.forEach(playerId => {
+          if (!tournament.players.includes(playerId)) {
+            tournament.players.push(playerId);
+          }
+        });
+        await tournament.save();
+
+        // Add tournament to each player's tournaments if not already added
+        for (const player of players) {
+          if (!player.tournaments.includes(tournamentId)) {
+            player.tournaments.push(tournamentId);
+            await player.save();
+          }
+        }
+
+        // Populate the tournament with player details
+        const populatedTournament = await Tournament.findById(tournamentId).populate({
+          path: 'players',
+          populate: { path: 'user' },
+        });
+
+        return {
+          id: populatedTournament._id.toString(),
+          name: populatedTournament.name,
+          game: populatedTournament.game,
+          date: populatedTournament.date.toISOString(),
+          status: populatedTournament.status,
+          players: populatedTournament.players.map((player) => ({
+            id: player._id.toString(),
+            user: {
+              id: player.user._id.toString(),
+              username: player.user.username,
+              email: player.user.email,
+              role: player.user.role,
+            },
+            ranking: player.ranking,
+          })),
+        };
+      } catch (error) {
+        console.error('Error assigning players to tournament:', error);
+        throw new Error('Failed to assign players to tournament');
+      }
+    },
   },
 };
 

@@ -36,7 +36,7 @@ const typeDefs = `#graphql
     # Player queries
     players: [Player]
     player(id: ID!): Player
-    playerByUserId(userId: ID!): Player  # New query to get player by user ID
+    playerByUserId(userId: ID!): Player
 
     # Tournament queries
     tournaments: [Tournament]
@@ -61,7 +61,8 @@ const typeDefs = `#graphql
     addTournament(name: String!, game: String!, date: String!, players: [ID!], status: String!): Tournament
     updateTournament(id: ID!, name: String, game: String, date: String, players: [ID!], status: String): Tournament
     deleteTournament(id: ID!): Tournament
-    joinTournament(tournamentId: ID!, playerId: ID!): Tournament  # New mutation to join a tournament
+    joinTournament(tournamentId: ID!, playerId: ID!): Tournament
+    assignTournamentPlayers(tournamentId: ID!, playerIds: [ID!]!): Tournament  # New mutation to assign multiple players to a tournament
   }
 `;
 

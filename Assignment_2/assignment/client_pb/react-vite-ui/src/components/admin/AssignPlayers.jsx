@@ -28,7 +28,7 @@ const GET_TOURNAMENTS = gql`
 
 const ASSIGN_PLAYERS_MUTATION = gql`
   mutation AssignPlayers($tournamentId: ID!, $playerIds: [ID!]!) {
-    updateTournament(id: $tournamentId, players: $playerIds) {
+    assignTournamentPlayers(tournamentId: $tournamentId, playerIds: $playerIds) {
       id
       name
       players {
@@ -51,7 +51,8 @@ const AssignPlayers = () => {
     e.preventDefault();
     try {
       const { data } = await assignPlayers({ variables: formData });
-      alert(`Players assigned to tournament ${data.updateTournament.name} successfully!`);
+      const assignedPlayerNames = data.assignTournamentPlayers.players.map(player => player.user.username).join(', ');
+      alert(`Players (${assignedPlayerNames}) assigned to tournament ${data.assignTournamentPlayers.name} successfully!`);
     } catch (error) {
       console.error('Error assigning players:', error);
       alert('Failed to assign players.');

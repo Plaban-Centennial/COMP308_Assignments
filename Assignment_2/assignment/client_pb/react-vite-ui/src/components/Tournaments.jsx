@@ -1,39 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, gql } from '@apollo/client';
+import { NavLink } from 'react-router-dom';
 
-const GET_PLAYER_BY_USER_ID = gql`
-  query GetPlayerByUserId($userId: ID!) {
-    playerByUserId(userId: $userId) {
+const GET_PLAYERS = gql`
+  query GetPlayers {
+    players {
       id
       user {
         id
         username
-        email
-        role
-      }
-      ranking
-      tournaments {
-        id
-        name
-        game
-        date
-        status
-        players {
-          id
-        }
       }
     }
   }
 `;
 
-const GET_UPCOMING_TOURNAMENTS = gql`
-  query GetUpcomingTournaments($status: String!) {
-    upcomingTournaments(status: $status) {
+const GET_TOURNAMENTS = gql`
+  query GetTournaments {
+    tournaments {
       id
       name
-      game
-      date
-      status
       players {
         id
       }
@@ -41,15 +26,14 @@ const GET_UPCOMING_TOURNAMENTS = gql`
   }
 `;
 
-const JOIN_TOURNAMENT = gql`
-  mutation JoinTournament($tournamentId: ID!, $playerId: ID!) {
-    joinTournament(tournamentId: $tournamentId, playerId: $playerId) {
+const ASSIGN_PLAYERS_MUTATION = gql`
+  mutation AssignPlayers($tournamentId: ID!, $playerIds: [ID!]!) {
+    assignTournamentPlayers(tournamentId: $tournamentId, playerIds: $playerIds) {
       id
       name
       players {
         id
         user {
-          id
           username
         }
       }
@@ -57,118 +41,98 @@ const JOIN_TOURNAMENT = gql`
   }
 `;
 
-const Tournaments = () => {
-  const user = JSON.parse(localStorage.getItem('user')); // Get logged-in user info
+const AssignPlayers = () => {
+  const [formData, setFormData] = useState({ tournamentId: '', playerIds: [] });
+  const { data: playersData, loading: loadingPlayers, error: errorPlayers } = useQuery(GET_PLAYERS);
+  const { data: tournamentsData, loading: loadingTournaments, error: errorTournaments } = useQuery(GET_TOURNAMENTS);
+  const [assignPlayers] = useMutation(ASSIGN_PLAYERS_MUTATION);
 
-  const { data: playerData, loading: loadingPlayer, error: errorPlayer } = useQuery(GET_PLAYER_BY_USER_ID, {
-    variables: { userId: user?.id },
-    skip: !user?.id, // Skip query if userId is not available
-  });
-
-  const playerId = playerData?.playerByUserId?.id;
-
-  const { data: upcomingData, loading: loadingUpcoming, error: errorUpcoming } = useQuery(GET_UPCOMING_TOURNAMENTS, {
-    variables: { status: "Upcoming" },
-  });
-
-  const [joinTournament] = useMutation(JOIN_TOURNAMENT);
-
-  const handleJoin = async (tournamentId) => {
-    if (!playerId) {
-      alert('Only authenticated players can join tournaments.');
-      return;
-    }
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      await joinTournament({
-        variables: {
-          tournamentId,
-          playerId,
-        },
-      });
-      alert('Successfully joined the tournament!');
-    } catch (err) {
-      console.error('Error joining tournament:', err);
-      alert('Failed to join the tournament. Please try again later.');
+      const { data } = await assignPlayers({ variables: formData });
+      const assignedPlayerNames = data.assignTournamentPlayers.players.map(player => player.user.username).join(', ');
+      alert(`Players (${assignedPlayerNames}) assigned to tournament ${data.assignTournamentPlayers.name} successfully!`);
+    } catch (error) {
+      console.error('Error assigning players:', error);
+      alert('Failed to assign players.');
     }
   };
 
-  if (loadingPlayer || loadingUpcoming) return <p>Loading tournaments...</p>;
+  if (loadingPlayers || loadingTournaments) return <p>Loading...</p>;
+  if (errorPlayers || errorTournaments) return <p>Error loading data.</p>;
 
-  if (errorPlayer || errorUpcoming) {
-    const errorMessage = errorPlayer?.message || errorUpcoming?.message || 'An unexpected error occurred.';
-    return <p style={styles.error}>Error: {errorMessage}</p>;
-  }
+  // Filter out players who are already part of the selected tournament
+  const availablePlayers = formData.tournamentId
+    ? playersData.players.filter(
+        (player) =>
+          !tournamentsData.tournaments
+            .find((tournament) => tournament.id === formData.tournamentId)
+            .players.some((tournamentPlayer) => tournamentPlayer.id === player.id)
+      )
+    : playersData.players;
 
   return (
-    <div style={styles.container}>
-      <h1>My Joined Tournaments</h1>
-      <ul>
-        {playerData?.playerByUserId?.tournaments?.length > 0 ? (
-          playerData.playerByUserId.tournaments.map((tournament) => (
-            <li key={tournament.id} style={styles.tournamentItem}>
-              <span>
-                {tournament.name} - {tournament.game} - {new Date(tournament.date).toLocaleDateString()} - {tournament.status}
-              </span>
-            </li>
-          ))
-        ) : (
-          <p>You have not joined any tournaments yet.</p>
-        )}
-      </ul>
+    <div>
+      {/* Menu Bar */}
+      <nav style={{ backgroundColor: '#f4f4f4', padding: '10px', marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
+        <h1 style={{ margin: 0, marginRight: '20px' }}>Admin Dashboard</h1>
+        <ul style={{ display: 'flex', listStyle: 'none', padding: 0, margin: 0 }}>
+          <li style={{ marginRight: '20px' }}>
+            <NavLink
+              to="/"
+              style={({ isActive }) => ({
+                textDecoration: 'none',
+                color: isActive ? 'red' : 'blue',
+              })}
+            >
+              Home
+            </NavLink>
+          </li>
+          <li style={{ marginRight: '20px' }}>
+            <NavLink
+              to="/create-user"
+              style={({ isActive }) => ({
+                textDecoration: 'none',
+                color: isActive ? 'red' : 'blue',
+              })}
+            >
+              Create User
+            </NavLink>
+          </li>
+        </ul>
+      </nav>
 
-      <h1>Upcoming Tournaments</h1>
-      <ul>
-        {upcomingData?.upcomingTournaments?.length > 0 ? (
-          upcomingData.upcomingTournaments.map((tournament) => {
-            const hasJoined = tournament.players.some(player => player.id === playerId);
-            return (
-              <li key={tournament.id} style={styles.tournamentItem}>
-                <span>
-                  {tournament.name} - {tournament.game} - {new Date(tournament.date).toLocaleDateString()}
-                </span>
-                {playerId && !hasJoined && (
-                  <button
-                    style={styles.joinButton}
-                    onClick={() => handleJoin(tournament.id)}
-                  >
-                    Join
-                  </button>
-                )}
-              </li>
-            );
-          })
-        ) : (
-          <p>No upcoming tournaments.</p>
-        )}
-      </ul>
+      {/* Form for Assigning Players */}
+      <form onSubmit={handleSubmit}>
+        <select
+          value={formData.tournamentId}
+          onChange={(e) => setFormData({ ...formData, tournamentId: e.target.value })}
+        >
+          <option value="">Select Tournament</option>
+          {tournamentsData.tournaments.map((tournament) => (
+            <option key={tournament.id} value={tournament.id}>
+              {tournament.name}
+            </option>
+          ))}
+        </select>
+        <select
+          multiple
+          value={formData.playerIds}
+          onChange={(e) =>
+            setFormData({ ...formData, playerIds: Array.from(e.target.selectedOptions, (option) => option.value) })
+          }
+        >
+          {availablePlayers.map((player) => (
+            <option key={player.id} value={player.id}>
+              {player.user.username}
+            </option>
+          ))}
+        </select>
+        <button type="submit">Assign Players</button>
+      </form>
     </div>
   );
 };
 
-const styles = {
-  container: {
-    textAlign: 'center',
-    padding: '20px',
-  },
-  error: {
-    color: 'red',
-    fontWeight: 'bold',
-  },
-  tournamentItem: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '10px',
-  },
-  joinButton: {
-    backgroundColor: '#007BFF',
-    color: 'white',
-    border: 'none',
-    padding: '5px 10px',
-    borderRadius: '5px',
-    cursor: 'pointer',
-  },
-};
-
-export default Tournaments;
+export default AssignPlayers;
