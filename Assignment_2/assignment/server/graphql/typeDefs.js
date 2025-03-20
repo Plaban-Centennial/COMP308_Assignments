@@ -36,6 +36,7 @@ const typeDefs = `#graphql
     # Player queries
     players: [Player]
     player(id: ID!): Player
+    playerByUserId(userId: ID!): Player  # New query to get player by user ID
 
     # Tournament queries
     tournaments: [Tournament]

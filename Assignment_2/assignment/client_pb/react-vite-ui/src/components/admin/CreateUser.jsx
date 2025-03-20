@@ -12,14 +12,41 @@ const CREATE_USER_MUTATION = gql`
   }
 `;
 
+const ADD_PLAYER_MUTATION = gql`
+ mutation AddPlayer($userId: ID!, $ranking: Int!, $tournaments: [ID!]) {
+  addPlayer(userId: $userId, ranking: $ranking, tournaments: $tournaments) {
+    id
+    user {
+      id
+      username
+      email
+    }
+    ranking
+    tournaments {
+      id
+      name
+    }
+  }
+}
+`;
+
+const getRandomInteger = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min; // Generates a random integer between min and max (inclusive)
+};
+
 const CreateUser = () => {
   const [formData, setFormData] = useState({ username: '', email: '', password: '', role: 'Player' });
   const [createUser] = useMutation(CREATE_USER_MUTATION);
+  const [addPlayer] = useMutation(ADD_PLAYER_MUTATION);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const { data } = await createUser({ variables: formData });
+      const userId = data.addUser.id;
+      if (data.addUser.role === 'Player') {
+        await addPlayer({ variables: { userId, ranking: getRandomInteger(1, 10000), tournaments: [] } });
+      }
       alert(`User ${data.addUser.username} created successfully!`);
     } catch (error) {
       console.error('Error creating user:', error);

@@ -43,6 +43,34 @@ const resolvers = {
         throw new Error('Failed to fetch user');
       }
     },
+    playerByUserId: async (_, { userId }) => {
+      try {
+        const player = await Player.findOne({ user: userId }).populate('user tournaments');
+        if (!player) {
+          throw new Error(`Player with User ID ${userId} not found`);
+        }
+        return {
+          id: player._id.toString(),
+          user: {
+            id: player.user._id.toString(),
+            username: player.user.username,
+            email: player.user.email,
+            role: player.user.role,
+          },
+          ranking: player.ranking,
+          tournaments: player.tournaments.map((tournament) => ({
+            id: tournament._id.toString(),
+            name: tournament.name,
+            game: tournament.game,
+            date: tournament.date.toISOString(),
+            status: tournament.status,
+          })),
+        };
+      } catch (error) {
+        console.error('Error fetching player by user ID:', error);
+        throw new Error('Failed to fetch player by user ID');
+      }
+    },
     // Fetch all players
     players: async () => {
       try {

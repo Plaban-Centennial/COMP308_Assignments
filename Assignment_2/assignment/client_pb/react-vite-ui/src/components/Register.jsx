@@ -30,7 +30,9 @@ const ADD_PLAYER_MUTATION = gql`
 }
 `;
 
-
+const getRandomInteger = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min; // Generates a random integer between min and max (inclusive)
+};
 
 const Register = () => {
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
@@ -43,7 +45,7 @@ const Register = () => {
     try {
       const { data } = await register({ variables: formData });
       const userId = data.addUser.id;
-      await addPlayer({ variables: { userId: userId, ranking: 1, tournaments: [] } });
+      await addPlayer({ variables: { userId: userId, ranking: getRandomInteger(1, 10000), tournaments: [] } });
       alert(`User registered and player added: ${data.addUser.username}`);
       navigate('/'); // Redirect to the home page after successful registration
     } catch (error) {
