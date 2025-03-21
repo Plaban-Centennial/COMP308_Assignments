@@ -44,7 +44,7 @@ const TournamentDetails = () => {
   const tournament = dataTournament?.tournament;
 
   return (
-    <div className="tournament-details">
+    <div className="tournament-details" >
       <h1>Tournament Details</h1>
       {tournament ? (
         <div className="tournament-info">

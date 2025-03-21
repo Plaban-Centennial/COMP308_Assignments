@@ -84,7 +84,7 @@ const AdminDashboard = () => {
       </nav>
 
       {/* Users Section */}
-      <div className="section">
+      <div className="user-section" width="100%">
         <h2>Users</h2>
         {users.length > 0 ? (
           <table className="table">
@@ -117,7 +117,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Tournaments Section */}
-      <div className="section">
+      <div className="tournament-section">
         <h2>Tournaments</h2>
         {tournaments.length > 0 ? (
           <table className="table">

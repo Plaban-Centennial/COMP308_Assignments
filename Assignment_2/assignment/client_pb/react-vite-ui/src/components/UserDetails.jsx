@@ -125,7 +125,7 @@ const UserDetails = () => {
               className="back-button"
               onClick={() => navigate('/admin')}
             >
-              Back to Admin Dashboard
+              Back
             </button>
           </div>
         </form>

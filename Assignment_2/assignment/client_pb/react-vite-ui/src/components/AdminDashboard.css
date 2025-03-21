@@ -90,6 +90,24 @@ html, body, #root {
   margin-top: 2rem; /* Add margin-top for vertical space */
 }
 
+.user-section {
+  padding: 2rem;
+  background-color: #1f2937;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  margin-top: 2rem; /* Add margin-top for vertical space */
+}
+
+.tournament-section {
+  padding: 2rem;
+  background-color: #1f2937;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  margin-top: 2rem; /* Add margin-top for vertical space */
+}
+
 .section h2 {
   font-size: 1.25rem;
   font-weight: 600;
@@ -130,4 +148,8 @@ html, body, #root {
 
 .table button:hover {
   text-decoration: underline;
+}
+
+.full-width {
+  width: 100%;
 }
