@@ -69,16 +69,36 @@ const AdminDashboard = () => {
         <h1>Admin Dashboard</h1>
         <ul>
           <li>
-            <a href="/" className="text-white hover:underline">Home</a>
+          <button
+              onClick={() => navigate('/')}
+              className="btn-red"
+            >
+              HOME
+            </button>
           </li>
           <li>
-            <a href="/create-user" className="text-white hover:underline">Create User</a>
+            <button
+              onClick={() => navigate('/create-user')}
+              className="btn-red"
+            >
+              CREATE USERS
+            </button>
           </li>
           <li>
-            <a href="/create-tournament" className="text-white hover:underline">Create Tournament</a>
+            <button
+              onClick={() => navigate('/create-tournament')}
+              className="btn-red"
+            >
+              CREATE TOURNAMENT
+            </button>
           </li>
           <li>
-            <a href="/assign-player" className="text-white hover:underline">Assign Player</a>
+          <button
+              onClick={() => navigate('/assign-player')}
+              className="btn-red"
+            >
+              ASSIGN PLAYERS
+            </button>
           </li>
         </ul>
       </nav>
