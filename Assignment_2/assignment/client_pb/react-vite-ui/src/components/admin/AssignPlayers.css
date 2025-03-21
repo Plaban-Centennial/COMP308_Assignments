@@ -1,0 +1,93 @@
+.assign-players {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+    background-color: #1e1e1e;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
+    margin: 50px auto;
+    color: #ffffff;
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  .assign-players h1 {
+    margin-bottom: 30px;
+    color: #ffffff;
+    font-size: 2em;
+    font-weight: 500;
+  }
+  
+  .assign-players-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+  }
+  
+  .assign-players-form label {
+    font-size: 1.1em;
+    color: #ffffff;
+    margin-bottom: 5px;
+  }
+  
+  .assign-players-form select,
+  .assign-players-form button {
+    padding: 8px; /* Reduced padding */
+    border: 1px solid #555;
+    border-radius: 4px;
+    background-color: #333;
+    color: #ffffff;
+    font-size: 1em;
+  }
+  
+  .assign-players-form select {
+    height: 100px; /* Reduced height */
+    overflow-y: auto;
+  }
+  
+  /* Custom scroll bar styles */
+  .assign-players-form select::-webkit-scrollbar {
+    width: 8px;
+    height: 8px; /* Set the height of the scrollbar */
+  }
+  
+  .assign-players-form select::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 4px;
+  }
+  
+  .assign-players-form select::-webkit-scrollbar-thumb:hover {
+    background-color: #777;
+  }
+  
+  .assign-players-form button {
+    background-color: #007bff;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+  }
+  
+  .assign-players-form button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+  }
+  
+  .assign-players-form button:active {
+    transform: translateY(0);
+  }
+  
+  .back-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .back-button:hover {
+    background-color: #5a6268;
+  }

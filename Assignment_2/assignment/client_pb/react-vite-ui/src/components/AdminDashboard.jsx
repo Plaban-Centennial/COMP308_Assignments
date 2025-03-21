@@ -1,6 +1,7 @@
 import React from 'react';
 import { useQuery, gql } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
+import './AdminDashboard.css'; // Import custom CSS for styling
 
 // Query to fetch all users
 const GET_ALL_USERS = gql`
@@ -49,12 +50,12 @@ const AdminDashboard = () => {
 
   if (errorUsers) {
     console.error('Error fetching users:', errorUsers.message);
-    return <p style={{ color: 'red' }}>Unable to fetch users. Please try again later.</p>;
+    return <p className="text-red-500">Unable to fetch users. Please try again later.</p>;
   }
 
   if (errorTournaments) {
     console.error('Error fetching tournaments:', errorTournaments.message);
-    return <p style={{ color: 'red' }}>Unable to fetch tournaments. Please try again later.</p>;
+    return <p className="text-red-500">Unable to fetch tournaments. Please try again later.</p>;
   }
 
   // Safely handle cases where data might be null or undefined
@@ -62,63 +63,93 @@ const AdminDashboard = () => {
   const tournaments = dataTournaments?.tournaments || [];
 
   return (
-    <div>
+    <div className="full-screen bg-dark font-segoe">
       {/* Menu Bar */}
-      <nav style={{ backgroundColor: '#f4f4f4', padding: '10px', marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
-        <h1 style={{ margin: 0, marginRight: '20px' }}>Admin Dashboard</h1>
-        <ul style={{ display: 'flex', listStyle: 'none', padding: 0, margin: 0 }}>
-          <li style={{ marginRight: '20px' }}>
-            <a href="/" style={{ textDecoration: 'none', color: 'blue' }}>Home</a>
-          </li>
-          <li style={{ marginRight: '20px' }}>
-            <a href="/create-user" style={{ textDecoration: 'none', color: 'blue' }}>Create User</a>
-          </li>
-          <li style={{ marginRight: '20px' }}>
-            <a href="/create-tournament" style={{ textDecoration: 'none', color: 'blue' }}>Create Tournament</a>
+      <nav className="navbar">
+        <h1>Admin Dashboard</h1>
+        <ul>
+          <li>
+            <a href="/" className="text-white hover:underline">Home</a>
           </li>
           <li>
-            <a href="/assign-player" style={{ textDecoration: 'none', color: 'blue' }}>Assign Player to Tournaments</a>
+            <a href="/create-user" className="text-white hover:underline">Create User</a>
+          </li>
+          <li>
+            <a href="/create-tournament" className="text-white hover:underline">Create Tournament</a>
+          </li>
+          <li>
+            <a href="/assign-player" className="text-white hover:underline">Assign Player</a>
           </li>
         </ul>
       </nav>
 
       {/* Users Section */}
-      <h2>Users</h2>
-      {users.length > 0 ? (
-        <ul>
-          {users.map((user) => (
-            <li key={user.id}>
-              <button
-                onClick={() => navigate(`/user/${user.id}`)} // Redirect to user details page
-                style={{ background: 'none', border: 'none', color: 'blue', cursor: 'pointer', textDecoration: 'underline' }}
-              >
-                {user.username}
-              </button>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No users found.</p>
-      )}
+      <div className="section">
+        <h2>Users</h2>
+        {users.length > 0 ? (
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={user.id}>
+                  <td>{user.username}</td>
+                  <td>{user.email}</td>
+                  <td>{user.role}</td>
+                  <td>
+                    <button onClick={() => navigate(`/user/${user.id}`)}>
+                      View
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No users found.</p>
+        )}
+      </div>
 
       {/* Tournaments Section */}
-      <h2>Tournaments</h2>
-      {tournaments.length > 0 ? (
-        <ul>
-          {tournaments.map((tournament) => (
-            <li key={tournament.id}>
-              <button
-                onClick={() => navigate(`/tournament/${tournament.id}`)} // Redirect to tournament details page
-                style={{ background: 'none', border: 'none', color: 'blue', cursor: 'pointer', textDecoration: 'underline' }}
-              >
-                {tournament.name}
-              </button>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No tournaments found.</p>
-      )}
+      <div className="section">
+        <h2>Tournaments</h2>
+        {tournaments.length > 0 ? (
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Game</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tournaments.map((tournament) => (
+                <tr key={tournament.id}>
+                  <td>{tournament.name}</td>
+                  <td>{tournament.game}</td>
+                  <td>{tournament.date}</td>
+                  <td>{tournament.status}</td>
+                  <td>
+                    <button onClick={() => navigate(`/tournament/${tournament.id}`)}>
+                      View
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No tournaments found.</p>
+        )}
+      </div>
     </div>
   );
 };

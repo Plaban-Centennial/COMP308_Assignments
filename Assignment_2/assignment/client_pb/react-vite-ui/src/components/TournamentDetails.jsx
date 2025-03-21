@@ -1,6 +1,7 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, gql } from '@apollo/client';
+import './TournamentDetails.css'; // Import the CSS file
 
 // GraphQL query to fetch tournament details by ID
 const GET_TOURNAMENT_DETAILS = gql`
@@ -25,6 +26,7 @@ const GET_TOURNAMENT_DETAILS = gql`
 
 const TournamentDetails = () => {
   const { id } = useParams(); // Get the tournament ID from the URL
+  const navigate = useNavigate(); // Hook for navigation
 
   // Fetch tournament details using the ID
   const { loading: loadingTournament, error: errorTournament, data: dataTournament } = useQuery(GET_TOURNAMENT_DETAILS, {
@@ -42,25 +44,52 @@ const TournamentDetails = () => {
   const tournament = dataTournament?.tournament;
 
   return (
-    <div>
+    <div className="tournament-details">
       <h1>Tournament Details</h1>
       {tournament ? (
-        <div style={{ padding: '10px', border: '1px solid #ccc', marginTop: '20px' }}>
-          <p><strong>ID:</strong> {tournament.id}</p>
-          <p><strong>Name:</strong> {tournament.name}</p>
-          <p><strong>Game:</strong> {tournament.game}</p>
-          <p><strong>Date:</strong> {new Date(tournament.date).toLocaleDateString()}</p>
-          <p><strong>Status:</strong> {tournament.status}</p>
+        <div className="tournament-info">
+          <table>
+            <tbody>
+              <tr>
+                <td><strong>ID:</strong></td>
+                <td>{tournament.id}</td>
+              </tr>
+              <tr>
+                <td><strong>Name:</strong></td>
+                <td>{tournament.name}</td>
+              </tr>
+              <tr>
+                <td><strong>Game:</strong></td>
+                <td>{tournament.game}</td>
+              </tr>
+              <tr>
+                <td><strong>Date:</strong></td>
+                <td>{new Date(tournament.date).toLocaleDateString()}</td>
+              </tr>
+              <tr>
+                <td><strong>Status:</strong></td>
+                <td>{tournament.status}</td>
+              </tr>
+            </tbody>
+          </table>
           <h3>Players</h3>
           {tournament.players.length > 0 ? (
-            <ul>
-              {tournament.players.map((player) => (
-                <li key={player.id}>
-                  <p><strong>Username:</strong> {player.user.username}</p>
-                  <p><strong>Email:</strong> {player.user.email}</p>
-                </li>
-              ))}
-            </ul>
+            <table>
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Email</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tournament.players.map((player) => (
+                  <tr key={player.id}>
+                    <td>{player.user.username}</td>
+                    <td>{player.user.email}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           ) : (
             <p>No players assigned to this tournament.</p>
           )}
@@ -68,6 +97,9 @@ const TournamentDetails = () => {
       ) : (
         <p>No tournament details found.</p>
       )}
+      <button className="back-button" onClick={() => navigate('/admin')}>
+        Back to Admin
+      </button>
     </div>
   );
 };

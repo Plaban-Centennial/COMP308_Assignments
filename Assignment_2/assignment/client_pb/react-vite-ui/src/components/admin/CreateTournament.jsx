@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
+import './CreateTournament.css'; // Import the CSS file
 
-// Updated Mutation
 const CREATE_TOURNAMENT_MUTATION = gql`
   mutation AddTournament(
     $name: String!
@@ -32,6 +33,7 @@ const CreateTournament = () => {
   });
 
   const [createTournament, { loading, error }] = useMutation(CREATE_TOURNAMENT_MUTATION);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,9 +57,9 @@ const CreateTournament = () => {
   };
 
   return (
-    <div>
+    <div className="create-tournament">
       <h1>Create Tournament</h1>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '400px' }}>
+      <form onSubmit={handleSubmit} className="create-tournament-form">
         <input
           type="text"
           placeholder="Tournament Name"
@@ -90,7 +92,10 @@ const CreateTournament = () => {
           {loading ? 'Creating...' : 'Create Tournament'}
         </button>
       </form>
-      {error && <p style={{ color: 'red' }}>Error: {error.message}</p>}
+      {error && <p className="error-message">Error: {error.message}</p>}
+      <button className="back-button" onClick={() => navigate('/admin')}>
+        Back to Admin
+      </button>
     </div>
   );
 };

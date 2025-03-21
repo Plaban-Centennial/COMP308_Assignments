@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
+import './CreateUser.css'; // Import custom CSS for styling
 
 const CREATE_USER_MUTATION = gql`
   mutation CreateUser($username: String!, $email: String!, $password: String!, $role: String!) {
@@ -38,6 +40,7 @@ const CreateUser = () => {
   const [formData, setFormData] = useState({ username: '', email: '', password: '', role: 'Player' });
   const [createUser] = useMutation(CREATE_USER_MUTATION);
   const [addPlayer] = useMutation(ADD_PLAYER_MUTATION);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,34 +58,40 @@ const CreateUser = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Username"
-        value={formData.username}
-        onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-      />
-      <input
-        type="email"
-        placeholder="Email"
-        value={formData.email}
-        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={formData.password}
-        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-      />
-      <select
-        value={formData.role}
-        onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-      >
-        <option value="Player">Player</option>
-        <option value="Admin">Admin</option>
-      </select>
-      <button type="submit">Create User</button>
-    </form>
+    <div className="section">
+      <h1>Create User</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Username"
+          value={formData.username}
+          onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+        />
+        <select
+          value={formData.role}
+          onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+        >
+          <option value="Player">Player</option>
+          <option value="Admin">Admin</option>
+        </select>
+        <button type="submit">Create User</button>
+      </form>
+      <button className="back-button" onClick={() => navigate('/admin')}>
+        Back to Admin Dashboard
+      </button>
+    </div>
   );
 };
 

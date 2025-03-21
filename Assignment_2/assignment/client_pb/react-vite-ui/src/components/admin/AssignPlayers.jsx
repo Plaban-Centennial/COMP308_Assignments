@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, gql } from '@apollo/client';
-import { NavLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import './AssignPlayers.css'; // Import the CSS file
 
 const GET_PLAYERS = gql`
   query GetPlayers {
@@ -46,6 +47,7 @@ const AssignPlayers = () => {
   const { data: playersData, loading: loadingPlayers, error: errorPlayers } = useQuery(GET_PLAYERS);
   const { data: tournamentsData, loading: loadingTournaments, error: errorTournaments } = useQuery(GET_TOURNAMENTS);
   const [assignPlayers] = useMutation(ASSIGN_PLAYERS_MUTATION);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -73,39 +75,12 @@ const AssignPlayers = () => {
     : playersData.players;
 
   return (
-    <div>
-      {/* Menu Bar */}
-      <nav style={{ backgroundColor: '#f4f4f4', padding: '10px', marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
-        <h1 style={{ margin: 0, marginRight: '20px' }}>Admin Dashboard</h1>
-        <ul style={{ display: 'flex', listStyle: 'none', padding: 0, margin: 0 }}>
-          <li style={{ marginRight: '20px' }}>
-            <NavLink
-              to="/"
-              style={({ isActive }) => ({
-                textDecoration: 'none',
-                color: isActive ? 'red' : 'blue',
-              })}
-            >
-              Home
-            </NavLink>
-          </li>
-          <li style={{ marginRight: '20px' }}>
-            <NavLink
-              to="/create-user"
-              style={({ isActive }) => ({
-                textDecoration: 'none',
-                color: isActive ? 'red' : 'blue',
-              })}
-            >
-              Create User
-            </NavLink>
-          </li>
-        </ul>
-      </nav>
-
-      {/* Form for Assigning Players */}
-      <form onSubmit={handleSubmit}>
+    <div className="assign-players">
+      <h1>Assign Players to Tournament</h1>
+      <form onSubmit={handleSubmit} className="assign-players-form">
+        <label htmlFor="tournament-select">Select Tournament</label>
         <select
+          id="tournament-select"
           value={formData.tournamentId}
           onChange={(e) => setFormData({ ...formData, tournamentId: e.target.value })}
         >
@@ -116,7 +91,9 @@ const AssignPlayers = () => {
             </option>
           ))}
         </select>
+        <label htmlFor="players-select">Select Players</label>
         <select
+          id="players-select"
           multiple
           value={formData.playerIds}
           onChange={(e) =>
@@ -131,6 +108,9 @@ const AssignPlayers = () => {
         </select>
         <button type="submit">Assign Players</button>
       </form>
+      <button className="back-button" onClick={() => navigate('/admin')}>
+        Back to Admin
+      </button>
     </div>
   );
 };

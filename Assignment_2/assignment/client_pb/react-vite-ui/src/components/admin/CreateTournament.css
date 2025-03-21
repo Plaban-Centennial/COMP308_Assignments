@@ -1,0 +1,73 @@
+.create-tournament {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: #2c2c2c;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .create-tournament h1 {
+    margin-bottom: 20px;
+    color: #ffffff;
+  }
+  
+  .create-tournament-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+  
+  .create-tournament-form input,
+  .create-tournament-form select,
+  .create-tournament-form button {
+    padding: 10px;
+    border: 1px solid #555;
+    border-radius: 4px;
+  }
+  
+  .create-tournament-form input,
+  .create-tournament-form select {
+    background-color: #444;
+    color: #ffffff;
+  }
+  
+  .create-tournament-form button {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .create-tournament-form button:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+  }
+  
+  .create-tournament-form button:hover:not(:disabled) {
+    background-color: #0056b3;
+  }
+  
+  .error-message {
+    color: #ff4d4d;
+    margin-top: 10px;
+  }
+  
+  .back-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .back-button:hover {
+    background-color: #5a6268;
+  }

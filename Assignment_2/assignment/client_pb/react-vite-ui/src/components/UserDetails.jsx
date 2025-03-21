@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, gql } from '@apollo/client';
+import './UserDetails.css'; // Import custom CSS for styling
 
 // GraphQL query to fetch user details by ID
 const GET_USER_DETAILS = gql`
@@ -28,6 +29,7 @@ const UPDATE_USER_DETAILS = gql`
 
 const UserDetails = () => {
   const { id } = useParams(); // Get the user ID from the URL
+  const navigate = useNavigate(); // React Router's navigation hook
 
   // Fetch user details using the ID
   const { loading, error, data } = useQuery(GET_USER_DETAILS, {
@@ -38,7 +40,7 @@ const UserDetails = () => {
   const [editableUser, setEditableUser] = useState(null);
 
   // Initialize state when data is fetched
-  React.useEffect(() => {
+  useEffect(() => {
     if (data?.user) {
       setEditableUser(data.user);
     }
@@ -83,10 +85,10 @@ const UserDetails = () => {
   }
 
   return (
-    <div>
+    <div className="section">
       <h1>User Details</h1>
       {editableUser ? (
-        <form onSubmit={handleSubmit} style={{ padding: '10px', border: '1px solid #ccc', marginTop: '20px' }}>
+        <form onSubmit={handleSubmit}>
           <p>
             <strong>Username:</strong>
             <input
@@ -116,7 +118,16 @@ const UserDetails = () => {
               <option value="Player">Player</option>
             </select>
           </p>
-          <button type="submit">Update User</button>
+          <div className="form-group">
+            <button type="submit">Update User</button>
+            <button
+              type="button"
+              className="back-button"
+              onClick={() => navigate('/admin')}
+            >
+              Back to Admin Dashboard
+            </button>
+          </div>
         </form>
       ) : (
         <p>No user details found.</p>
