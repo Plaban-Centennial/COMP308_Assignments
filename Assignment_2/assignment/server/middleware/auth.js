@@ -6,6 +6,7 @@ const { AuthenticationError } = require('apollo-server-express');
 // Middleware to verify the token
 const authMiddleware = (req) => {
   const token = req.cookies.token; // Get the token from cookies
+  console.log('Token:', token);
   if (!token) {
     throw new AuthenticationError('Authentication required');
   }
