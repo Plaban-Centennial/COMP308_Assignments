@@ -46,7 +46,7 @@ const App = () => {
               <Route
                 path="/admin"
                 element={
-                  <ProtectedRoute roles={['admin']}>
+                  <ProtectedRoute roles={['Admin']}>
                     <AdminDashboard />
                   </ProtectedRoute>
                 }
@@ -54,7 +54,7 @@ const App = () => {
               <Route
                 path="/create-user"
                 element={
-                  <ProtectedRoute roles={['admin']}>
+                  <ProtectedRoute roles={['Admin']}>
                     <CreateUser />
                   </ProtectedRoute>
                 }
@@ -62,7 +62,7 @@ const App = () => {
               <Route
                 path="/create-tournament"
                 element={
-                  <ProtectedRoute roles={['admin']}>
+                  <ProtectedRoute roles={['Admin']}>
                     <CreateTournament />
                   </ProtectedRoute>
                 }
@@ -70,7 +70,7 @@ const App = () => {
               <Route
                 path="/assign-player"
                 element={
-                  <ProtectedRoute roles={['admin']}>
+                  <ProtectedRoute roles={['Admin']}>
                     <AssignPlayers />
                   </ProtectedRoute>
                 }
@@ -78,7 +78,7 @@ const App = () => {
               <Route
                 path="/list-tournaments"
                 element={
-                  <ProtectedRoute roles={['admin']}>
+                  <ProtectedRoute roles={['Admin']}>
                     <ListTournamentsAndPlayers />
                   </ProtectedRoute>
                 }
