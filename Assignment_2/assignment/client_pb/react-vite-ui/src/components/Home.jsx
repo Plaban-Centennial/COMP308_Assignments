@@ -35,7 +35,7 @@ const Home = () => {
 
       {/* Main Content */}
       <div style={styles.container}>
-        <h1 style={styles.heading}>Welcome to the Tournament Management System</h1>
+        <h2 style={styles.heading}>Welcome to the Tournament Management System</h2>
         <p style={styles.description}>
           Manage tournaments, register players, and view tournament history with ease.
         </p>
@@ -119,50 +119,69 @@ const styles = {
   },
   container: {
     textAlign: 'center',
-    padding: '60px 20px',
-    paddingLeft: '10%', // Add padding to the left
-    paddingRight: '10%', // Add padding to the right
+    padding: '30px 10px', // Reduce padding
+    paddingLeft: '5%', // Reduce padding to the left
+    paddingRight: '5%', // Reduce padding to the right
     fontFamily: "'Press Start 2P', cursive", // Gamer-themed font
-    marginTop: '100px', // Add margin to avoid overlap with the fixed navbar
+    marginTop: '0px', // Add margin to avoid overlap with the fixed navbar
     backgroundImage: 'url("/path/to/your/gamer-background.jpg")', // Add a gamer-themed background image
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    minHeight: 'calc(100vh - 100px)', // Ensure the container takes at least the full height of the viewport minus the navbar height
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundSize: 'width',
+    backgroundPosition: 'bottom',
+    // minHeight: 'calc(100vh - 100px)', // Ensure the container takes at least the full height of the viewport minus the navbar height
     color: '#E0E0E0', // Ensure text is readable on dark background
+    overflow: 'hidden', // Hide the scrollbar
+    positiony: 'absolute', // Ensure z-index works as expected
+    maxHeight: '50%', // Ensure the container does not exceed the viewport height
   },
   heading: {
-    fontSize: '3rem',
-    marginBottom: '25px',
+    fontSize: '2.5rem', // Reduce font size
+    marginBottom: '20px', // Reduce margin
     color: '#FF6347', // Muted vibrant color for heading
     textAlign: 'center', // Center the heading text
   },
   description: {
-    fontSize: '1.5rem',
-    marginBottom: '35px',
+    fontSize: '1.2rem', // Reduce font size
+    marginBottom: '25px', // Reduce margin
     color: '#ADFF2F', // Muted vibrant color for description
-    maxWidth: '600px', // Limit the width of the description for better readability
+    maxWidth: '500px', // Reduce max width
+    margin: '0 auto', // Center the description
   },
   links: {
-    display: 'flex',
-    justifyContent: 'space-around', // Spread links evenly
-    gap: '25px',
-    marginTop: '25px',
-    flexWrap: 'wrap', // Allow links to wrap to the next line if needed
+    display: 'block',
+    textAlign: 'center',
+    gap: '15px', // Reduce gap
+    marginTop: '20px', // Reduce margin
   },
   link: {
+    display: 'inline-block',
     textDecoration: 'none',
     color: '#FFFFFF',
     backgroundColor: '#FF6347', // Muted vibrant button background
-    padding: '12px 25px',
+    padding: '10px 20px', // Reduce padding
     borderRadius: '5px',
-    fontSize: '1.2rem',
+    fontSize: '1rem', // Reduce font size
     transition: 'background-color 0.3s, color 0.3s',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Add shadow for depth
+    margin: '8px', // Reduce margin
   },
 };
 
-export default Home;
+// Global styles to hide the scrollbar
+const globalStyles = `
+  body, html {
+    overflow: hidden;
+  }
+`;
+
+const GlobalStyle = () => (
+  <style>
+    {globalStyles}
+  </style>
+);
+
+export default () => (
+  <>
+    <GlobalStyle />
+    <Home />
+  </>
+);

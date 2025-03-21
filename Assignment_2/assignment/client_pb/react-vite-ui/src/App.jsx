@@ -17,6 +17,7 @@ const App = () => {
   return (
     <ApolloClientProvider>
       <Router>
+        <GlobalStyle />
         <div style={styles.appContainer}>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -53,5 +54,18 @@ const styles = {
     fontFamily: "'Press Start 2P', cursive", // Gamer-themed font
   },
 };
+
+// Global styles to hide the scrollbar
+const globalStyles = `
+  body {
+    overflow: hidden;
+  }
+`;
+
+const GlobalStyle = () => (
+  <style>
+    {globalStyles}
+  </style>
+);
 
 export default App;
