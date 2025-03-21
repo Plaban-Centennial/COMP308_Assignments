@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ParticleBackground from './ParticleBackground';
 
 const Home = () => {
   const user = JSON.parse(localStorage.getItem('user')); // Get user info from localStorage
@@ -12,6 +13,7 @@ const Home = () => {
 
   return (
     <>
+      <ParticleBackground />
       {/* Menu Bar */}
       <nav style={styles.navbar}>
         <h2 style={styles.logo}>Tournament Management</h2>
