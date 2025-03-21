@@ -1,15 +1,19 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
+import { AuthContext } from '../contexts/AuthContext';
 
-const ProtectedRoute = ({ children, requiredRole }) => {
-  const user = JSON.parse(localStorage.getItem('user')); // Get user info from localStorage
+const ProtectedRoute = ({ children, roles }) => {
+  const { user } = useContext(AuthContext);
 
-  if (!user || user.role !== requiredRole) {
-    // Redirect to login if not authenticated or not an admin
+  if (!user) {
     return <Navigate to="/login" />;
   }
 
-  return children; // Render the protected component
+  if (roles && !roles.includes(user.role)) {
+    return <Navigate to="/" />;
+  }
+
+  return children;
 };
 
 export default ProtectedRoute;

@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ApolloClientProvider } from './apolloClient';
+import AuthProvider from './contexts/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 import Home from './components/Home.jsx';
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
@@ -16,24 +18,75 @@ import TournamentDetails from './components/TournamentDetails';
 const App = () => {
   return (
     <ApolloClientProvider>
-      <Router>
-        <GlobalStyle />
-        <div style={styles.appContainer}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/user/:id" element={<UserDetails />} />
-            <Route path="/tournament/:id" element={<TournamentDetails />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/tournaments" element={<Tournaments />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/create-user" element={<CreateUser />} />
-            <Route path="/create-tournament" element={<CreateTournament />} />
-            <Route path="/assign-player" element={<AssignPlayers />} />
-            <Route path="/list-tournaments" element={<ListTournamentsAndPlayers />} />
-          </Routes>
-        </div>
-      </Router>
+      <AuthProvider>
+        <Router>
+          <GlobalStyle />
+          <div style={styles.appContainer}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/tournaments" element={<Tournaments />} />
+              <Route
+                path="/user/:id"
+                element={
+                  <ProtectedRoute>
+                    <UserDetails />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/tournament/:id"
+                element={
+                  <ProtectedRoute>
+                    <TournamentDetails />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute roles={['admin']}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/create-user"
+                element={
+                  <ProtectedRoute roles={['admin']}>
+                    <CreateUser />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/create-tournament"
+                element={
+                  <ProtectedRoute roles={['admin']}>
+                    <CreateTournament />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/assign-player"
+                element={
+                  <ProtectedRoute roles={['admin']}>
+                    <AssignPlayers />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/list-tournaments"
+                element={
+                  <ProtectedRoute roles={['admin']}>
+                    <ListTournamentsAndPlayers />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </div>
+        </Router>
+      </AuthProvider>
     </ApolloClientProvider>
   );
 };
@@ -45,17 +98,16 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: '100vh',
-    width: '100%', // Ensure the container takes the full width of the viewport
+    width: '100%',
     padding: '20px',
     boxSizing: 'border-box',
-    overflowX: 'hidden', // Prevent horizontal scrolling
-    backgroundColor: '#0D1117', // Dark background color
+    overflowX: 'hidden',
+    backgroundColor: '#0D1117',
     color: 'white',
-    fontFamily: "'Press Start 2P', cursive", // Gamer-themed font
+    fontFamily: "'Press Start 2P', cursive",
   },
 };
 
-// Global styles to hide the scrollbar
 const globalStyles = `
   body {
     overflow: hidden;

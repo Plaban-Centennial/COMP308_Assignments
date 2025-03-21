@@ -5,10 +5,11 @@ import { useNavigate } from 'react-router-dom';
 const LOGIN_MUTATION = gql`
   mutation Login($username: String!, $password: String!) {
     login(username: $username, password: $password) {
-      id
-      username
-      email
-      role
+       id
+       username
+       email
+       role
+       token
     }
   }
 `;
@@ -22,7 +23,14 @@ const Login = () => {
     e.preventDefault();
     try {
       const { data } = await login({ variables: formData });
-      localStorage.setItem('user', JSON.stringify(data.login)); // Store user info
+      console.log('Login response:', data);
+      // Save the token in localStorage
+      localStorage.setItem('token', data.login.token);
+      localStorage.setItem('authToken', data.login.token);
+
+      // Save the user details in localStorage
+      localStorage.setItem('user', JSON.stringify(data.login));
+
       alert(`Welcome, ${data.login.username}`);
       navigate('/'); // Redirect to the home page
     } catch (error) {

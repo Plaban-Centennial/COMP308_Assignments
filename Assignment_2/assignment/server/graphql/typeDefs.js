@@ -26,6 +26,13 @@ const typeDefs = `#graphql
     players: [Player!]
   }
 
+type LoginResponse {
+  id: ID!
+  username: String!
+  email: String!
+  role: String!
+  token: String!
+}
   # Query type definition
   type Query {
     # User queries
@@ -47,7 +54,7 @@ const typeDefs = `#graphql
   # Mutation type definition
   type Mutation {
     # User mutations
-    login(username: String!, password: String!): User
+    # login(username: String!, password: String!): User
     addUser(username: String!, email: String!, password: String!, role: String!): User
     updateUser(id: ID!, username: String, email: String, password: String, role: String): User
     deleteUser(id: ID!): User
@@ -63,6 +70,8 @@ const typeDefs = `#graphql
     deleteTournament(id: ID!): Tournament
     joinTournament(tournamentId: ID!, playerId: ID!): Tournament
     assignTournamentPlayers(tournamentId: ID!, playerIds: [ID!]!): Tournament  # New mutation to assign multiple players to a tournament
+
+    login(username: String!, password: String!): LoginResponse!
   }
 `;
 

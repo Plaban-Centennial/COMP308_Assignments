@@ -1,10 +1,13 @@
 // module.exports = resolvers;
-const User = require('../models/user');
+const { AuthenticationError } = require('apollo-server-express'); // Import AuthenticationError
+const User = require('../models/User');
 const Player = require('../models/player');
 const Tournament = require('../models/tournament');
-const authMiddleware = require('../middleware/auth');
+// const authMiddleware = require('../middleware/auth');
 const bcrypt = require('bcrypt'); // Import bcrypt
-const { generateToken } = require('../utils/tokenUtils');
+// const { generateToken } = require('../utils/tokenUtils');
+// const { loginHandler } = require('../middleware/auth');
+const jwt = require('jsonwebtoken'); // Import jsonwebtoken
 
 const resolvers = {
   Query: {
@@ -249,41 +252,41 @@ const resolvers = {
   },
   Mutation: {
     //Login
-    login: async (_, { username, password }, { res }) => {
-      try {
-        // Find the user by email
-        const user = await User.findOne({ username });
-        if (!user) {
-          throw new Error('Invalid username or password');
-        }
+    // login: async (_, { username, password }, { res }) => {
+    //   try {
+    //     // Find the user by email
+    //     const user = await User.findOne({ username });
+    //     if (!user) {
+    //       throw new Error('Invalid username or password');
+    //     }
 
-        // Compare the provided password with the hashed password
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-          throw new Error('Invalid username or password');
-        }
+    //     // Compare the provided password with the hashed password
+    //     const isMatch = await bcrypt.compare(password, user.password);
+    //     if (!isMatch) {
+    //       throw new Error('Invalid username or password');
+    //     }
 
-        // Generate a JWT token
-        const token = generateToken(user);
+    //     // Generate a JWT token
+    //     const token = generateToken(user);
 
-        // Set the token in an HTTPOnly cookie
-        res.cookie('token', token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-          maxAge: 24 * 60 * 60 * 1000, // 1 day
-        });
+    //     // Set the token in an HTTPOnly cookie
+    //     res.cookie('token', token, {
+    //       httpOnly: true,
+    //       secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+    //       maxAge: 24 * 60 * 60 * 1000, // 1 day
+    //     });
 
-        return {
-          id: user._id.toString(),
-          username: user.username,
-          email: user.email,
-          role: user.role,
-        };
-      } catch (error) {
-        console.error('Error during login:', error.message);
-        throw new Error('Failed to login');
-      }
-    },
+    //     return {
+    //       id: user._id.toString(),
+    //       username: user.username,
+    //       email: user.email,
+    //       role: user.role,
+    //     };
+    //   } catch (error) {
+    //     console.error('Error during login:', error.message);
+    //     throw new Error('Failed to login');
+    //   }
+    // },
     // Add a new user
     addUser: async (_, { username, email, password, role }) => {
       try {
@@ -660,6 +663,55 @@ const resolvers = {
       } catch (error) {
         console.error('Error assigning players to tournament:', error);
         throw new Error('Failed to assign players to tournament');
+      }
+    },
+    login: async (_, { username, password }, { res }) => {
+      try {
+        console.log('Login attempt:', { username, password }); // Debugging
+    
+        // Find the user in MongoDB by username
+        const user = await User.findOne({ username });
+        if (!user) {
+          console.error('User not found:', username); // Debugging
+          throw new AuthenticationError('Invalid username or password');
+        }
+    
+        console.log('User found:', user); // Debugging
+    
+        // Compare the provided password with the hashed password in the database
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+          console.error('Invalid password for user:', username); // Debugging
+          throw new AuthenticationError('Invalid username or password');
+        }
+    
+        console.log('Password is valid for user:', username); // Debugging
+    
+        // Generate a JWT token
+        const token = jwt.sign({ id: user._id, role: user.role }, 'your_jwt_secret', { expiresIn: '1h' });
+    
+        console.log('Generated token:', token); // Debugging
+    
+        // Set the token in an HTTP-only cookie
+        res.cookie('token', token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+          maxAge: 24 * 60 * 60 * 1000, // 1 day
+        });
+    
+        console.log('Token set in cookie'); // Debugging
+    
+        // Return the user details and token
+        return {
+          id: user._id.toString(),
+          username: user.username,
+          email: user.email,
+          role: user.role,
+          token, // Include the token in the response if needed
+        };
+      } catch (error) {
+        console.error('Error during login:', error.message); // Debugging
+        throw new AuthenticationError('Failed to login');
       }
     },
   },
