@@ -1,8 +1,13 @@
 #root {
+  width: 100%; /* Ensure the root element takes the full width of the viewport */
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  background-color: #0D1117; /* Dark background color */
+  color: white; /* Ensure text is readable on dark background */
+  font-family: 'Press Start 2P', cursive; /* Gamer-themed font */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
 .logo {

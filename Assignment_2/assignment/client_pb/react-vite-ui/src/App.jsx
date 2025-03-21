@@ -17,22 +17,41 @@ const App = () => {
   return (
     <ApolloClientProvider>
       <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/user/:id" element={<UserDetails />} />
-          <Route path="/tournament/:id" element={<TournamentDetails />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/tournaments" element={<Tournaments />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/create-user" element={<CreateUser />} />
-          <Route path="/create-tournament" element={<CreateTournament />} />
-          <Route path="/assign-player" element={<AssignPlayers />} />
-          <Route path="/list-tournaments" element={<ListTournamentsAndPlayers />} />
-        </Routes>
+        <div style={styles.appContainer}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/user/:id" element={<UserDetails />} />
+            <Route path="/tournament/:id" element={<TournamentDetails />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/tournaments" element={<Tournaments />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/create-user" element={<CreateUser />} />
+            <Route path="/create-tournament" element={<CreateTournament />} />
+            <Route path="/assign-player" element={<AssignPlayers />} />
+            <Route path="/list-tournaments" element={<ListTournamentsAndPlayers />} />
+          </Routes>
+        </div>
       </Router>
     </ApolloClientProvider>
   );
+};
+
+const styles = {
+  appContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '100vh',
+    width: '100%', // Ensure the container takes the full width of the viewport
+    padding: '20px',
+    boxSizing: 'border-box',
+    overflowX: 'hidden', // Prevent horizontal scrolling
+    backgroundColor: '#0D1117', // Dark background color
+    color: 'white',
+    fontFamily: "'Press Start 2P', cursive", // Gamer-themed font
+  },
 };
 
 export default App;

@@ -24,10 +24,17 @@ a:hover {
 
 body {
   margin: 0;
+  width: 100%; /* Ensure the body takes the full width of the viewport */
+  height: 100vh; /* Ensure the body takes the full height of the viewport */
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+  padding: 20px; /* Add padding to ensure content is not too close to the edges */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  background-color: #0D1117; /* Dark background color */
+  color: white; /* Ensure text is readable on dark background */
+  font-family: 'Press Start 2P', cursive; /* Gamer-themed font */
+  overflow: hidden; /* Hide the scrollbar */
 }
 
 h1 {

@@ -75,66 +75,91 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '10px 20px',
-    backgroundColor: '#007BFF',
-    color: 'white',
+    padding: '15px 30px',
+    backgroundColor: '#2C2C2C', // Dark background color
+    color: '#E0E0E0',
     zIndex: 1000, // Ensure it stays above other elements
+    fontFamily: "'Press Start 2P', cursive", // Gamer-themed font
+    boxSizing: 'border-box',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Add shadow for depth
   },
   logo: {
-    fontSize: '1.5rem',
+    fontSize: '1.8rem',
     fontWeight: 'bold',
+    color: '#FF6347', // Muted vibrant color for logo
   },
   navLinks: {
     display: 'flex',
     alignItems: 'center',
-    gap: '15px',
+    gap: '20px',
   },
   greeting: {
-    color: 'white',
-    fontSize: '1rem',
-    marginRight: '10px',
+    color: '#ADFF2F', // Muted vibrant color for greeting
+    fontSize: '1.2rem',
+    marginRight: '15px',
   },
   navLink: {
-    color: 'white',
+    color: '#87CEEB', // Muted vibrant color for nav links
     textDecoration: 'none',
-    fontSize: '1rem',
+    fontSize: '1.2rem',
+    transition: 'color 0.3s',
   },
   navButton: {
-    backgroundColor: 'white',
-    color: '#007BFF',
+    backgroundColor: '#FF6347', // Muted vibrant button background
+    color: '#FFFFFF',
     border: 'none',
-    padding: '5px 10px',
+    padding: '8px 15px',
     borderRadius: '5px',
     cursor: 'pointer',
-    fontSize: '1rem',
+    fontSize: '1.2rem',
+    transition: 'background-color 0.3s, color 0.3s',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Add shadow for depth
   },
   container: {
     textAlign: 'center',
-    padding: '50px',
-    fontFamily: 'Arial, sans-serif',
-    marginTop: '80px', // Add margin to avoid overlap with the fixed navbar
+    padding: '60px 20px',
+    paddingLeft: '10%', // Add padding to the left
+    paddingRight: '10%', // Add padding to the right
+    fontFamily: "'Press Start 2P', cursive", // Gamer-themed font
+    marginTop: '100px', // Add margin to avoid overlap with the fixed navbar
+    backgroundImage: 'url("/path/to/your/gamer-background.jpg")', // Add a gamer-themed background image
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    minHeight: 'calc(100vh - 100px)', // Ensure the container takes at least the full height of the viewport minus the navbar height
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: '#E0E0E0', // Ensure text is readable on dark background
   },
   heading: {
-    fontSize: '2.5rem',
-    marginBottom: '20px',
+    fontSize: '3rem',
+    marginBottom: '25px',
+    color: '#FF6347', // Muted vibrant color for heading
+    textAlign: 'center', // Center the heading text
   },
   description: {
-    fontSize: '1.2rem',
-    marginBottom: '30px',
+    fontSize: '1.5rem',
+    marginBottom: '35px',
+    color: '#ADFF2F', // Muted vibrant color for description
+    maxWidth: '600px', // Limit the width of the description for better readability
   },
   links: {
     display: 'flex',
-    justifyContent: 'center',
-    gap: '20px',
-    marginTop: '20px',
+    justifyContent: 'space-around', // Spread links evenly
+    gap: '25px',
+    marginTop: '25px',
+    flexWrap: 'wrap', // Allow links to wrap to the next line if needed
   },
   link: {
     textDecoration: 'none',
-    color: 'white',
-    backgroundColor: '#007BFF',
-    padding: '10px 20px',
+    color: '#FFFFFF',
+    backgroundColor: '#FF6347', // Muted vibrant button background
+    padding: '12px 25px',
     borderRadius: '5px',
-    fontSize: '1rem',
+    fontSize: '1.2rem',
+    transition: 'background-color 0.3s, color 0.3s',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Add shadow for depth
   },
 };
 
