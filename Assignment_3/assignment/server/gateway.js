@@ -1,4 +1,5 @@
 // server/gateway.js
+require('dotenv').config();
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const { ApolloGateway } = require('@apollo/gateway');
@@ -9,7 +10,7 @@ const app = express();
 // Configure the Apollo Gateway
 const gateway = new ApolloGateway({
   serviceList: [
-    { name: 'products', url: 'http://localhost:3002/graphql' },
+    { name: 'gameprogress', url: 'http://localhost:3002/graphql' },
     { name: 'auth', url: 'http://localhost:3003/graphql' }
     // Additional services can be listed here
   ],
