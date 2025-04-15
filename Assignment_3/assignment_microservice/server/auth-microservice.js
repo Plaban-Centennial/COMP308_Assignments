@@ -19,8 +19,11 @@ app.use(cors({
 app.use(cookieParser());
 
 // MongoDB connection setup
-const mongoUri = process.env.MONGO_URI; // Use the MONGO_URI from .env
-mongoose.connect(mongoUri, {});
+const mongoUri = process.env.USER_MONGO_URI; // Use the MONGO_URI from .env
+mongoose.connect(mongoUri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
