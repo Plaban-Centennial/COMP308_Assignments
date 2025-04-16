@@ -114,7 +114,7 @@ function GameProgressComponent({ userId }) {
           <Card className="gamer-card">
             <Card.Body>
               <Card.Title>Progress</Card.Title>
-              <h3>{gameProgress?.progress || 0}%</h3>
+              <h3>{gameProgress?.progress || 0}</h3>
             </Card.Body>
           </Card>
         </Col>
