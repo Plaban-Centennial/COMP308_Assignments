@@ -6,6 +6,18 @@
   text-align: center;
 }
 
+body {
+  margin: 0;
+  font-family: 'Press Start 2P', cursive;
+  background-color: #1e1e2f;
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+.App {
+  text-align: center;
+}
+
 /* Ensure the shell app spans the full width */
 .shell-app {
   display: flex;
@@ -29,14 +41,24 @@
   top: 0;
   left: 0;
   width: 100%;
-  background-color: #1e1e2f;
+  background-color: #2c2c3e;
   color: #ffffff;
-  padding: 10px 20px;
+  padding: 15px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   z-index: 1000;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: slideDown 0.5s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
 .header-content {
@@ -46,11 +68,35 @@
   width: 100%;
 }
 
+.app-title {
+  font-size: 24px;
+  font-weight: bold;
+  font-family: 'Press Start 2P', cursive;
+  color: #ff9800;
+  margin: 0;
+  animation: glow 1.5s infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 5px #ff9800, 0 0 10px #ff9800, 0 0 20px #ff9800;
+  }
+  to {
+    text-shadow: 0 0 10px #ff5722, 0 0 20px #ff5722, 0 0 30px #ff5722;
+  }
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
 .username {
   font-size: 16px;
   font-weight: bold;
   font-family: 'Press Start 2P', cursive;
-  color: #ff9800;
+  color: #ffffff;
 }
 
 .logout-button {
@@ -62,20 +108,39 @@
   font-family: 'Press Start 2P', cursive;
   cursor: pointer;
   border-radius: 5px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  animation: pulse 2s infinite;
 }
 
 .logout-button:hover {
   background-color: #e64a19;
+  transform: scale(1.1);
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 5px #ff5722, 0 0 10px #ff5722;
+  }
+  50% {
+    box-shadow: 0 0 15px #ff5722, 0 0 30px #ff5722;
+  }
+  100% {
+    box-shadow: 0 0 5px #ff5722, 0 0 10px #ff5722;
+  }
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .shell-title {
-    font-size: 2rem;
+  .app-title {
+    font-size: 18px;
   }
 
-  .shell-subtitle {
-    font-size: 1rem;
+  .username {
+    font-size: 14px;
+  }
+
+  .logout-button {
+    padding: 6px 12px;
+    font-size: 12px;
   }
 }

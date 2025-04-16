@@ -62,10 +62,13 @@ function App() {
       {isLoggedIn && (
         <header className="app-header">
           <div className="header-content">
-            <span className="username">Welcome, {username || 'Player'}</span>
-            <button onClick={handleLogout} className="logout-button">
-              Logout
-            </button>
+            <h1 className="app-title">Game Dashboard</h1>
+            <div className="user-info">
+              <span className="username">Hi, {username || 'Player'}</span>
+              <button onClick={handleLogout} className="logout-button">
+                Logout
+              </button>
+            </div>
           </div>
         </header>
       )}

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery, useSubscription, gql } from '@apollo/client';
 import { Container, Alert, Row, Col, Card } from 'react-bootstrap';
-import { Bar, Pie } from 'react-chartjs-2';
+import { Bar, Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto'; // Required for Chart.js
 import './GameProgressComponent.css'; // Custom CSS for gamer theme
 
@@ -75,8 +75,8 @@ function GameProgressComponent({ userId }) {
     ],
   };
 
-  // Chart data for achievements
-  const pieChartData = {
+  // Chart data for achievements (Doughnut Chart)
+  const doughnutChartData = {
     labels: gameProgress?.achievements || [],
     datasets: [
       {
@@ -119,7 +119,7 @@ function GameProgressComponent({ userId }) {
           </Card>
         </Col>
       </Row>
-      <Row className="mt-4">
+      <Row className="mt-4 row-equal-height">
         {/* Metrics Chart */}
         <Col md={6}>
           <Card className="gamer-card">
@@ -129,12 +129,14 @@ function GameProgressComponent({ userId }) {
             </Card.Body>
           </Card>
         </Col>
-        {/* Achievements Chart */}
+        {/* Achievements Chart (Doughnut) */}
         <Col md={6}>
           <Card className="gamer-card">
             <Card.Body>
               <Card.Title>Achievements</Card.Title>
-              <Pie data={pieChartData} />
+              <div className="doughnut-chart-container">
+                <Doughnut data={doughnutChartData} />
+              </div>
             </Card.Body>
           </Card>
         </Col>
