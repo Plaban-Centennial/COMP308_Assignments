@@ -3,6 +3,7 @@ import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import './App.css';
 
+// Lazy-loaded micro-frontends
 const UserApp = lazy(() => import('userApp/App'));
 const GameProgressApp = lazy(() => import('gameprogressApp/App'));
 
@@ -46,18 +47,24 @@ function App() {
     }
   }, [loading, error, data]);
 
-  console.log('Query Data:', data);
-  console.log('Extracted userId:', userId);
-
-  console.log('Is Logged In:', isLoggedIn);
+  const handleLogout = () => {
+    console.log('User logged out');
+    setIsLoggedIn(false);
+    // Add your logout logic here, e.g., clearing tokens, redirecting to login page, etc.
+  };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error! {error.message}</div>;
 
-  console.log('Final userId:', userId);
-
   return (
     <div className="App">
+      {isLoggedIn && (
+        <div style={{ position: 'fixed', top: 0, right: 0, padding: '10px', zIndex: 1000 }}>
+          <button onClick={handleLogout} style={{ backgroundColor: 'red', color: 'white', border: 'none', padding: '10px 20px', cursor: 'pointer' }}>
+            Logout
+          </button>
+        </div>
+      )}
       <Suspense fallback={<div>Loading...</div>}>
         {!isLoggedIn ? (
           <UserApp />
