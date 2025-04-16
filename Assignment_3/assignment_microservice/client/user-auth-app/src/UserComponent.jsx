@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { useMutation, useQuery, gql } from '@apollo/client';
 import { Alert, Button, Form, Container, Nav, Spinner } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
+import './UserComponent.css'; // Custom CSS for user authentication theme
 
 // GraphQL mutations and queries
 const LOGIN_MUTATION = gql`
