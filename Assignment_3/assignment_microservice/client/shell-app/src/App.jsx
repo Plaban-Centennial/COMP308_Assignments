@@ -2,6 +2,7 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import './App.css';
+import ThreeBackground from './ThreeBackground'; // Import the ThreeBackground component
 
 // Lazy-loaded micro-frontends
 const UserApp = lazy(() => import('userApp/App'));
@@ -44,15 +45,12 @@ function App() {
 
   useEffect(() => {
     if (!loading && !error) {
-      console.log('Current User Data:', data); // Debugging
       setIsLoggedIn(!!data.currentUser);
     }
   }, [loading, error, data]);
 
   const handleLogout = () => {
-    console.log('User logged out');
     setIsLoggedIn(false);
-    // Add your logout logic here, e.g., clearing tokens, redirecting to login page, etc.
   };
 
   if (loading) return <div>Loading...</div>;
@@ -60,6 +58,7 @@ function App() {
 
   return (
     <div className="App">
+      <ThreeBackground /> {/* Render the Three.js background */}
       {isLoggedIn && (
         <header className="app-header">
           <div className="header-content">

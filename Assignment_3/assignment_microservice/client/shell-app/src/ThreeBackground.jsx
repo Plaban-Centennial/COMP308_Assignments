@@ -17,58 +17,97 @@ function ThreeBackground() {
     renderer.setPixelRatio(window.devicePixelRatio);
     mount.appendChild(renderer.domElement);
 
-    // Particle System
-    const particleCount = 1000;
-    const particles = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 3);
+    // Rain Effect (Particles)
+    const rainCount = 2250;
+    const rainGeometry = new THREE.BufferGeometry();
+    const rainPositions = new Float32Array(rainCount * 3);
+    const rainSpeeds = new Float32Array(rainCount);
+    const rainColors = new Float32Array(rainCount * 3);
 
-    for (let i = 0; i < particleCount; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 10; // x
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 10; // y
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 10; // z
+    for (let i = 0; i < rainCount; i++) {
+      rainPositions[i * 3] = (Math.random() - 0.5) * 50; // x
+      rainPositions[i * 3 + 1] = Math.random() * 50; // y
+      rainPositions[i * 3 + 2] = (Math.random() - 0.5) * 50; // z
+
+      rainSpeeds[i] = Math.random() * 0.05 + 0.02;
+
+      rainColors[i * 3] = Math.random(); // Red
+      rainColors[i * 3 + 1] = Math.random(); // Green
+      rainColors[i * 3 + 2] = Math.random(); // Blue
     }
 
-    particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    rainGeometry.setAttribute('position', new THREE.BufferAttribute(rainPositions, 3));
+    rainGeometry.setAttribute('color', new THREE.BufferAttribute(rainColors, 3));
 
-    const particleMaterial = new THREE.PointsMaterial({
-      color: 0xff9800,
+    const rainMaterial = new THREE.PointsMaterial({
       size: 0.05,
+      vertexColors: true,
       transparent: true,
-      opacity: 0.8,
+      opacity: 0.5,
+      depthWrite: false,
     });
 
-    const particleSystem = new THREE.Points(particles, particleMaterial);
-    scene.add(particleSystem);
+    const rain = new THREE.Points(rainGeometry, rainMaterial);
+    scene.add(rain);
 
-    // Mouse Interaction
-    const mouse = new THREE.Vector2();
-    const onMouseMove = (event) => {
+    // Mouse Interactivity
+    const mouse = { x: 0, y: 0 };
+    window.addEventListener('mousemove', (event) => {
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-      particleSystem.rotation.x = mouse.y * 0.5;
-      particleSystem.rotation.y = mouse.x * 0.5;
-    };
-
-    window.addEventListener('mousemove', onMouseMove);
+    });
 
     // Animation Loop
     const animate = () => {
       requestAnimationFrame(animate);
-      particleSystem.rotation.z += 0.001; // Rotate particles slowly
+
+      const positions = rain.geometry.attributes.position.array;
+      for (let i = 0; i < rainCount; i++) {
+        positions[i * 3 + 1] -= rainSpeeds[i];
+        if (positions[i * 3 + 1] < -25) {
+          positions[i * 3 + 1] = 25;
+        }
+      }
+      rain.geometry.attributes.position.needsUpdate = true;
+
+      rain.rotation.x = mouse.y * 0.1;
+      rain.rotation.y = mouse.x * 0.1;
+
       renderer.render(scene, camera);
     };
 
     animate();
 
+    // Handle Window Resize
+    const handleResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+    window.addEventListener('resize', handleResize);
+
     // Cleanup
     return () => {
-      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('mousemove', null);
       mount.removeChild(renderer.domElement);
     };
   }, []);
 
-  return <div ref={mountRef} style={{ position: 'absolute', top: 0, left: 0, zIndex: -1, width: '100%', height: '100%' }} />;
+  return (
+    <div
+      ref={mountRef}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        zIndex: -1,
+        overflow: 'hidden',
+      }}
+    />
+  );
 }
 
 export default ThreeBackground;
