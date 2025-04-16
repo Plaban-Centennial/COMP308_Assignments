@@ -1,0 +1,8 @@
+Server
+Server/Auth - node auth-microservice.js
+Server/GameProgress - node gameprogress-microservice.js
+
+Client
+Client/Auth - npm run deploy
+Client/GameProgress - npm run deploy
+Client/Shell - npm run dev

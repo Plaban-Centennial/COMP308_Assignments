@@ -43,7 +43,10 @@ function UserComponent() {
     const { data, loading, error, refetch } = useQuery(CURRENT_USER_QUERY);
 
     const [login] = useMutation(LOGIN_MUTATION, {
-        onCompleted: () => refetch(),
+        onCompleted: () => {
+            refetch();
+            handleLogin();
+        },
         onError: (error) => setAuthError(error.message || 'Login failed'),
     });
 
@@ -59,6 +62,12 @@ function UserComponent() {
         onCompleted: () => refetch(),
         onError: (error) => console.error(error.message || 'Logout failed'),
     });
+
+    const handleLogin = () => {
+        // After successful login logic
+        const event = new CustomEvent('loginSuccess', { detail: { isLoggedIn: true } });
+        window.dispatchEvent(event);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
