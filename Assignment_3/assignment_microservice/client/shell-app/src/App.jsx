@@ -21,8 +21,8 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Use Apollo's useQuery hook to perform the authentication status check on app load
-  const { loading, error, data } = useQuery(CURRENT_USER_QUERY, {
-    fetchPolicy: 'network-only',
+  const { loading, error, data, refetch } = useQuery(CURRENT_USER_QUERY, {
+    fetchPolicy: 'network-only', // Always fetch fresh data
   });
 
   const userId = data?.currentUser?.id;
@@ -32,6 +32,7 @@ function App() {
     // Listen for the custom loginSuccess event from the UserApp
     const handleLoginSuccess = (event) => {
       setIsLoggedIn(event.detail.isLoggedIn);
+      refetch(); // Refetch user data on login success
     };
 
     window.addEventListener('loginSuccess', handleLoginSuccess);
@@ -39,11 +40,11 @@ function App() {
     return () => {
       window.removeEventListener('loginSuccess', handleLoginSuccess);
     };
-  }, []);
+  }, [refetch]);
 
   useEffect(() => {
     if (!loading && !error) {
-      console.log('Current User Data:', data); // Log the data object
+      console.log('Current User Data:', data); // Debugging
       setIsLoggedIn(!!data.currentUser);
     }
   }, [loading, error, data]);

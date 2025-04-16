@@ -34,9 +34,7 @@ const GAME_PROGRESS_SUBSCRIPTION = gql`
 `;
 
 function GameProgressComponent({ userId }) {
-  console.log('User ID:', userId);
-
-  const { data, loading, error } = useQuery(GET_GAME_PROGRESS_QUERY, {
+  const { data, loading, error, refetch } = useQuery(GET_GAME_PROGRESS_QUERY, {
     variables: { userId },
   });
 
@@ -46,17 +44,28 @@ function GameProgressComponent({ userId }) {
 
   const [gameProgress, setGameProgress] = useState(null);
 
+  // Update state when query data is fetched
   useEffect(() => {
     if (data) {
       setGameProgress(data.getGameProgress);
     }
   }, [data]);
 
+  // Update state when subscription data is received
   useEffect(() => {
     if (subscriptionData) {
+      console.log('Subscription data received:', subscriptionData);
       setGameProgress(subscriptionData.gameProgressUpdated);
     }
   }, [subscriptionData]);
+
+  // Periodically refetch data to ensure freshness
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetch();
+    }, 30000); // Refetch every 30 seconds
+    return () => clearInterval(interval);
+  }, [refetch]);
 
   if (loading) return <p>Loading game progress...</p>;
   if (error) return <Alert variant="danger">Error loading game progress: {error.message}</Alert>;
