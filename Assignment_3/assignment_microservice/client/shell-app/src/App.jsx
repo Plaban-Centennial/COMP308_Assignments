@@ -26,6 +26,7 @@ function App() {
   });
 
   const userId = data?.currentUser?.id;
+  const username = data?.currentUser?.username;
 
   useEffect(() => {
     // Listen for the custom loginSuccess event from the UserApp
@@ -59,11 +60,14 @@ function App() {
   return (
     <div className="App">
       {isLoggedIn && (
-        <div style={{ position: 'fixed', top: 0, right: 0, padding: '10px', zIndex: 1000 }}>
-          <button onClick={handleLogout} style={{ backgroundColor: 'red', color: 'white', border: 'none', padding: '10px 20px', cursor: 'pointer' }}>
-            Logout
-          </button>
-        </div>
+        <header className="app-header">
+          <div className="header-content">
+            <span className="username">Welcome, {username || 'Player'}</span>
+            <button onClick={handleLogout} className="logout-button">
+              Logout
+            </button>
+          </div>
+        </header>
       )}
       <Suspense fallback={<div>Loading...</div>}>
         {!isLoggedIn ? (

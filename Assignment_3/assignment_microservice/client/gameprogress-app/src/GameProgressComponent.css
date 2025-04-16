@@ -1,0 +1,37 @@
+.gamer-theme {
+  background-color: #1e1e2f;
+  color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.gamer-title {
+  font-family: 'Press Start 2P', cursive;
+  color: #ff9800;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.gamer-card {
+  background-color: #2c2c3e;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.gamer-card .card-title {
+  font-family: 'Press Start 2P', cursive;
+  color: #ff5722;
+}
+
+.gamer-card p {
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+.gamer-card h3 {
+  font-size: 24px;
+  margin: 10px 0;
+}
