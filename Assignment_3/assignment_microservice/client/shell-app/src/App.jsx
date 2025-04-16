@@ -10,6 +10,7 @@ const GameProgressApp = lazy(() => import('gameprogressApp/App'));
 const CURRENT_USER_QUERY = gql`
   query CurrentUser {
     currentUser {
+      id
       username
     }
   }
@@ -23,6 +24,8 @@ function App() {
     fetchPolicy: 'network-only',
   });
 
+  const userId = data?.currentUser?.id;
+
   useEffect(() => {
     // Listen for the custom loginSuccess event from the UserApp
     const handleLoginSuccess = (event) => {
@@ -31,23 +34,38 @@ function App() {
 
     window.addEventListener('loginSuccess', handleLoginSuccess);
 
-    // Check the authentication status based on the query's result
-    if (!loading && !error) {
-      setIsLoggedIn(!!data.currentUser);
-    }
-
     return () => {
       window.removeEventListener('loginSuccess', handleLoginSuccess);
     };
+  }, []);
+
+  useEffect(() => {
+    if (!loading && !error) {
+      console.log('Current User Data:', data); // Log the data object
+      setIsLoggedIn(!!data.currentUser);
+    }
   }, [loading, error, data]);
+
+  console.log('Query Data:', data);
+  console.log('Extracted userId:', userId);
+
+  console.log('Is Logged In:', isLoggedIn);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error! {error.message}</div>;
 
+  console.log('Final userId:', userId);
+
   return (
     <div className="App">
       <Suspense fallback={<div>Loading...</div>}>
-        {!isLoggedIn ? <UserApp /> : <GameProgressApp />}
+        {!isLoggedIn ? (
+          <UserApp />
+        ) : userId ? (
+          <GameProgressApp userId={userId} />
+        ) : (
+          <div>Loading user data...</div>
+        )}
       </Suspense>
     </div>
   );

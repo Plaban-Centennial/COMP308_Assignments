@@ -10,12 +10,13 @@ const client = new ApolloClient({
   credentials: 'include'
 });
 
-function App() {
+function App({ userId }) {
+  console.log('Received userId in gameprogress-app:', userId);
 
   return (
     <div className='App'>
       <ApolloProvider client={client}>
-        <GameProgressComponent />
+        <GameProgressComponent userId={userId} />
       </ApolloProvider>
     </div>
   );

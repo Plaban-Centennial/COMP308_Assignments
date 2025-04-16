@@ -1,89 +1,116 @@
 // gameprogress-app/src/GameProgressComponent.jsx
-import React, { useState } from 'react';
-import { useQuery, useMutation, gql } from '@apollo/client';
-import { Button, Form, Container, ListGroup, Alert } from 'react-bootstrap';
+import React, { useEffect, useRef, useState } from 'react';
+import { useQuery, useSubscription, gql } from '@apollo/client';
+import * as THREE from 'three';
+import { Container, Alert } from 'react-bootstrap';
 
-const GET_PRODUCTS_QUERY = gql`
-  query GetProducts {
-    products {
-      id
-      productName
-      productDescription
-    }
-  }
-`;
-//
-const ADD_PRODUCT_MUTATION = gql`
-  mutation AddProduct($productName: String!, $productDescription: String!) {
-    addProduct(productName: $productName, productDescription: $productDescription) {
-      id
-      productName
-      productDescription
+// GraphQL queries and subscriptions
+const GET_GAME_PROGRESS_QUERY = gql`
+  query GetGameProgress($userId: ID!) {
+    getGameProgress(userId: $userId) {
+      level
+      experiencePoints
+      score
+      rank
+      achievements
+      progress
     }
   }
 `;
 
-function ProductComponent() {
-    const { loading, error, data } = useQuery(GET_PRODUCTS_QUERY, {
-        context: { credentials: 'include' },
-    });
+const GAME_PROGRESS_SUBSCRIPTION = gql`
+  subscription OnGameProgressUpdated($userId: ID!) {
+    gameProgressUpdated(userId: $userId) {
+      level
+      experiencePoints
+      score
+      rank
+      achievements
+      progress
+    }
+  }
+`;
 
-    const [addProduct, { loading: adding }] = useMutation(ADD_PRODUCT_MUTATION, {
-        refetchQueries: [GET_PRODUCTS_QUERY],
-    });
+function GameProgressComponent({ userId }) {
+  console.log('User ID:', userId);
 
-    const [productName, setProductName] = useState('');
-    const [productDescription, setProductDescription] = useState('');
+  const { data, loading, error } = useQuery(GET_GAME_PROGRESS_QUERY, {
+    variables: { userId },
+  });
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!productName.trim() || !productDescription.trim()) return;
-        await addProduct({ variables: { productName, productDescription } });
-        setProductName('');
-        setProductDescription('');
+  const { data: subscriptionData } = useSubscription(GAME_PROGRESS_SUBSCRIPTION, {
+    variables: { userId },
+  });
+
+  const mountRef = useRef(null);
+  const [gameProgress, setGameProgress] = useState(null);
+
+  useEffect(() => {
+    if (data) {
+      setGameProgress(data.getGameProgress);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (subscriptionData) {
+      setGameProgress(subscriptionData.gameProgressUpdated);
+    }
+  }, [subscriptionData]);
+
+  useEffect(() => {
+    if (!gameProgress) return;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    mountRef.current.appendChild(renderer.domElement);
+
+    // Create a 3D progress bar
+    const geometry = new THREE.BoxGeometry(gameProgress.level, 1, 1);
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const progressBar = new THREE.Mesh(geometry, material);
+    scene.add(progressBar);
+
+    camera.position.z = 5;
+
+    const animate = () => {
+      requestAnimationFrame(animate);
+      progressBar.rotation.y += 0.01; // Smooth rotation for visual effect
+      renderer.render(scene, camera);
     };
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <Alert variant="danger">Error :( Please make sure you're logged in.</Alert>;
+    animate();
 
-    return (
-        <Container>
-            <h2>Add a New Product</h2>
-            <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3">
-                    <Form.Label>Product Name</Form.Label>
-                    <Form.Control
-                        type="text"
-                        placeholder="Enter product name"
-                        value={productName}
-                        onChange={(e) => setProductName(e.target.value)}
-                    />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Product Description</Form.Label>
-                    <Form.Control
-                        as="textarea"
-                        rows={3}
-                        placeholder="Enter product description"
-                        value={productDescription}
-                        onChange={(e) => setProductDescription(e.target.value)}
-                    />
-                </Form.Group>
-                <Button variant="primary" type="submit" disabled={adding}>
-                    Add Product
-                </Button>
-            </Form>
+    return () => {
+      mountRef.current.removeChild(renderer.domElement);
+    };
+  }, [gameProgress]);
 
-            <h3 className="mt-4">Product List</h3>
-            <ListGroup>
-                {data && data.products.map(({ id, productName, productDescription }) => (
-                    <ListGroup.Item key={id}>
-                        <strong>{productName}</strong>: {productDescription}
-                    </ListGroup.Item>
-                ))}
-            </ListGroup>
-        </Container>
-    );
+  if (loading) return <p>Loading game progress...</p>;
+  if (error) return <Alert variant="danger">Error loading game progress: {error.message}</Alert>;
+
+  return (
+    <Container>
+      <h2>Game Progress</h2>
+      <div ref={mountRef}></div>
+      {gameProgress && (
+        <div>
+          <p>Level: {gameProgress.level}</p>
+          <p>Experience Points: {gameProgress.experiencePoints}</p>
+          <p>Score: {gameProgress.score}</p>
+          <p>Rank: {gameProgress.rank}</p>
+          <p>Progress: {gameProgress.progress}</p>
+          <p>Achievements: {gameProgress.achievements.join(', ')}</p>
+        </div>
+      )}
+    </Container>
+  );
 }
 
-export default ProductComponent;
+function GameProgressApp({ userId }) {
+  console.log('Received userId in GameProgressApp:', userId);
+}
+
+export default GameProgressComponent;

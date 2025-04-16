@@ -59,6 +59,7 @@ const User = mongoose.model('User', userSchema);
 
 const typeDefs = gql`
   type User {
+    id: ID!
     username: String!
     email: String!
     role: String!
@@ -78,22 +79,28 @@ const typeDefs = gql`
 
 const resolvers = {
     Query: {
-        currentUser: (_, __, { req }) => {
+        currentUser: async (_, __, { req }) => {
             const token = req.cookies['token'];
             if (!token) {
-                return null; // No user is logged in
+                console.log('No token found');
+                return null;
             }
 
             try {
-                const decoded = jwt.verify(token, process.env.JWT_SECRET); // Use JWT_SECRET from .env
-                return {
-                    username: decoded.username,
-                    email: decoded.email,
-                    role: decoded.role,
-                    createdAt: decoded.createdAt
-                };
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                console.log('Decoded Token:', decoded);
+                const user = await User.findById(decoded.id);
+                console.log('User Found:', user);
+                return user ? {
+                    id: user._id,
+                    username: user.username,
+                    email: user.email,
+                    role: user.role,
+                    createdAt: user.createdAt,
+                } : null;
             } catch (error) {
-                return null; // Token verification failed
+                console.error('Token verification failed:', error);
+                return null;
             }
         },
     },
@@ -110,7 +117,7 @@ const resolvers = {
             }
 
             const token = jwt.sign(
-                { username: user.username, email: user.email, role: user.role, createdAt: user.createdAt },
+                { id: user._id, username: user.username, email: user.email, role: user.role, createdAt: user.createdAt },
                 process.env.JWT_SECRET, // Use JWT_SECRET from .env
                 { expiresIn: '1d' }
             );
