@@ -10,12 +10,12 @@ export default defineConfig({
   plugins: [
     react(),
     federation({
-      name: 'GameProgressApp',
+      name: 'gameprogressApp',
       filename: 'remoteEntry.js',
       exposes: {
         './App': './src/App', // Adjust the path to your main App or specific component
       },
-      shared: ['react', 'react-dom', '@apollo/client', 'graphql'],
+      shared: ['react', 'react-dom', '@apollo/client', 'graphql', 'three'],
     }),
   ],
   build: {
