@@ -47,7 +47,7 @@ function App() {
   return (
     <div className="App">
       <Suspense fallback={<div>Loading...</div>}>
-        {!isLoggedIn ? <UserApp /> : <ProductApp />}
+        {!isLoggedIn ? <UserApp /> : <GameProgressApp />}
       </Suspense>
     </div>
   );
